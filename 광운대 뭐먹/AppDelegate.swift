@@ -7,16 +7,68 @@
 //
 
 import UIKit
-
+import GoogleMaps
+import GoogleSignIn
+import MapKit
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate, CLLocationManagerDelegate {
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+        
+    }
+    
 
     var window: UIWindow?
-
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        return GIDSignIn.sharedInstance().handle(url as URL?,
+                                                 sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
+                                                 annotation: options[UIApplication.OpenURLOptionsKey.annotation])
+    }
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        GMSServices.provideAPIKey("AIzaSyA6tkLW2SO5T2-DHPTy0JnQ3zvavS0amFk")
+        
+        window = UIWindow(frame: UIScreen.main.bounds)
+        window?.makeKeyAndVisible()
+        
+        window?.rootViewController = TabBarController()
+        
+        UINavigationBar.appearance().titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
+        UITabBar.appearance().tintColor = themeColor
+        
+        GIDSignIn.sharedInstance().clientID = "269508860979-hfi0o98m2upea2beatioqvh8asqhn5co.apps.googleusercontent.com"
+        GIDSignIn.sharedInstance().delegate = self
+        
+        //        setupLocationManager()
+        Thread.sleep(forTimeInterval: 1.0)
         return true
+    }
+    
+    var locationManager: CLLocationManager!
+    var currentCoordinate: CLLocationCoordinate2D?
+    
+    func setupLocationManager(){
+        
+        locationManager = CLLocationManager()
+        locationManager?.delegate = self
+        self.locationManager?.requestWhenInUseAuthorization()
+        locationManager?.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        locationManager?.startUpdatingLocation()
+    }
+    
+    // Below method will provide you current location.
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
+        if currentCoordinate == nil {
+            currentCoordinate = locations.last?.coordinate
+            locationManager?.stopMonitoringSignificantLocationChanges()
+            let locationValue:CLLocationCoordinate2D = manager.location!.coordinate
+            
+            print("locations = \(locationValue)")
+            //currentCoordinate use this location Coordinate in your whole app.
+            locationManager?.stopUpdatingLocation()
+        }
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
