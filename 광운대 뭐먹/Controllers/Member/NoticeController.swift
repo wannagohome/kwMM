@@ -7,9 +7,12 @@
 //
 
 import UIKit
+import Alamofire
+import SwiftyJSON
 
 class NoticeController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
-    var titles: NoticeTitles?
+//    var titles: NoticeTitles?
+    var titleJson: JSON?
     
     override func viewDidLoad() {
         let backBTN = UIBarButtonItem(image: UIImage(named: "Back"),
@@ -22,7 +25,7 @@ class NoticeController: UICollectionViewController, UICollectionViewDelegateFlow
         collectionView?.backgroundColor = UIColor(white: 0.95, alpha: 1)
         collectionView.register(NoticeCell.self, forCellWithReuseIdentifier: cellId)
         
-        fetchLists()
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -31,28 +34,52 @@ class NoticeController: UICollectionViewController, UICollectionViewDelegateFlow
         navigationController?.navigationBar.barStyle = .black
         if Global.shared.isErrorLableShowing { Global.removeErrorLable() }
     }
+    override func viewDidAppear(_ animated: Bool) {
+        fetchLists()
+    }
     
     func fetchLists() {
         let dicToSend = ["func":"notice"]
-        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//
+//        ApiService.shared.getData(dataToSend: dataToSend){ (titles: NoticeTitles) in
+//
+//            self.titles = titles
+//            self.collectionView.reloadData()
+//
+//        }
         
-        ApiService.shared.getData(dataToSend: dataToSend){ (titles: NoticeTitles) in
-            
-            self.titles = titles
-            self.collectionView.reloadData()
-            
+        ApiService.shared.loadingStart()
+        AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend, encoding: JSONEncoding.default).responseJSON {
+            (responds) in
+            switch responds.result {
+                
+            case .success(let value):
+                self.titleJson = JSON(value)
+                self.collectionView.reloadData()
+                ApiService.shared.loadingStop()
+                
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+                ApiService.shared.loadingStop()
+                self.showAlert(message: "네트워크 오류")
+                
+            }
         }
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return titles?.titles?.count ?? 0
+//        return titles?.titles?.count ?? 0
+        return titleJson?["titles"].count ?? 0
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! NoticeCell
         cell.backgroundColor = UIColor.white
         
-        cell.noticeTitles = titles?.titles?[indexPath.row]
+//        cell.noticeTitles = titles?.titles?[indexPath.row]
+        cell.titleLable.text = titleJson?["titles"][indexPath.row]["title"].string
         cell.layer.borderWidth = 0.3
         cell.layer.borderColor = UIColor.gray.cgColor
         cell.backgroundColor = .white
@@ -62,7 +89,8 @@ class NoticeController: UICollectionViewController, UICollectionViewDelegateFlow
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let noticeDetailController = NoticeDetailController()
-        noticeDetailController.id = titles?.titles?[indexPath.row].id
+//        noticeDetailController.id = titles?.titles?[indexPath.row].id
+        noticeDetailController.id = titleJson?["titles"][indexPath.row]["id"].string
         self.navigationController?.pushViewController(noticeDetailController, animated: true)
     }
     

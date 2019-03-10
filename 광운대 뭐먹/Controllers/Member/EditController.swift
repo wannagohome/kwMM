@@ -8,6 +8,8 @@
 
 import UIKit
 import PhotosUI
+import Alamofire
+import SwiftyJSON
 
 class EditController: UIViewController, UIImagePickerControllerDelegate,UINavigationControllerDelegate, UITextFieldDelegate {
     
@@ -152,20 +154,50 @@ class EditController: UIViewController, UIImagePickerControllerDelegate,UINaviga
                 self.nicknameConfirmed = false
             } else {
                 let dicToSend: [String: Any] = ["func":"checkusable nickname", "nickname":nickname]
-                let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//                let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//
+//                ApiService.shared.getData(dataToSend: dataToSend){ (result: SimpleResponse) in
+//                    if result.data! == "overlapped" {
+//                        self.nicknameConfirmLable.text = "이미 사용중인 닉네임 입니다"
+//                        self.nicknameConfirmLable.textColor = UIColor.red
+//                        self.nicknameConfirmLable.isHidden = false
+//                        self.nicknameTextField.backgroundColor = UIColor(red: 1, green: 0, blue: 0, alpha: 0.1)
+//                        self.nicknameConfirmed = false
+//                    } else {
+//                        self.nicknameConfirmed = true
+//                        self.nicknameConfirmLable.text = "사용가능한 닉네임 입니다"
+//                        self.nicknameConfirmLable.textColor = UIColor.blue
+//                        self.nicknameTextField.backgroundColor = UIColor.clear
+//                    }
+//                }
                 
-                ApiService.shared.getData(dataToSend: dataToSend){ (result: SimpleResponse) in
-                    if result.data! == "overlapped" {
-                        self.nicknameConfirmLable.text = "이미 사용중인 닉네임 입니다"
-                        self.nicknameConfirmLable.textColor = UIColor.red
-                        self.nicknameConfirmLable.isHidden = false
-                        self.nicknameTextField.backgroundColor = UIColor(red: 1, green: 0, blue: 0, alpha: 0.1)
-                        self.nicknameConfirmed = false
-                    } else {
-                        self.nicknameConfirmed = true
-                        self.nicknameConfirmLable.text = "사용가능한 닉네임 입니다"
-                        self.nicknameConfirmLable.textColor = UIColor.blue
-                        self.nicknameTextField.backgroundColor = UIColor.clear
+                ApiService.shared.loadingStart()
+                AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend as Parameters, encoding: JSONEncoding.default).responseJSON {
+                    (responds) in
+                    switch responds.result {
+                        
+                    case .success(let value):
+                        let json:JSON = JSON(value)
+                        if json["data"].string == "overlapped" {
+                            self.nicknameConfirmLable.text = "이미 사용중인 닉네임 입니다"
+                            self.nicknameConfirmLable.textColor = UIColor.red
+                            self.nicknameConfirmLable.isHidden = false
+                            self.nicknameTextField.backgroundColor = UIColor(red: 1, green: 0, blue: 0, alpha: 0.1)
+                            self.nicknameConfirmed = false
+                        } else {
+                            self.nicknameConfirmed = true
+                            self.nicknameConfirmLable.text = "사용가능한 닉네임 입니다"
+                            self.nicknameConfirmLable.textColor = UIColor.blue
+                            self.nicknameTextField.backgroundColor = UIColor.clear
+                        }
+                        ApiService.shared.loadingStop()
+                        
+                        
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                        ApiService.shared.loadingStop()
+                        self.showAlert(message: "네트워크 오류")
+                        
                     }
                 }
             }
@@ -289,38 +321,65 @@ class EditController: UIViewController, UIImagePickerControllerDelegate,UINaviga
             dicToSend = ["func":"edit profile", "id":id, "image":base64String]
         }
         
-        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//
+//        ApiService.shared.getData(dataToSend: dataToSend){ (response: SimpleResponse) in
+//            switch response.data {
+//            case "success" :
+//                self.showAlert(message: "변경 되었습니다")
+//                if sender.tag == 1 {
+//                    UserDefaults.standard.set(self.nicknameTextField.text ?? "", forKey: "nickname")
+//                }
+//                break
+//            case "same" :
+//                self.showAlert(message: "이전 비밀번호와 동일합니다")
+//                break
+//            case "overlap" :
+//                self.showAlert(message: "이미 사용중인 닉네임 입니다")
+//                break
+//            case "fail" :
+//                self.showAlert(message: "네트워크 오류")
+//                break
+//            default :
+//                break
+//            }
+//        }
         
-        ApiService.shared.getData(dataToSend: dataToSend){ (response: SimpleResponse) in
-            switch response.data {
-            case "success" :
-                self.showAlert(message: "변경 되었습니다")
-                if sender.tag == 1 {
-                    UserDefaults.standard.set(self.nicknameTextField.text ?? "", forKey: "nickname")
+        ApiService.shared.loadingStart()
+        AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend as Parameters, encoding: JSONEncoding.default).responseJSON {
+            (responds) in
+            switch responds.result {
+                
+            case .success(let value):
+                let json:JSON = JSON(value)
+                switch json["data"].string {
+                case "success" :
+                    self.showAlert(message: "변경 되었습니다")
+                    if sender.tag == 1 {
+                        UserDefaults.standard.set(self.nicknameTextField.text ?? "", forKey: "nickname")
+                    }
+                    break
+                case "same" :
+                    self.showAlert(message: "이전 비밀번호와 동일합니다")
+                    break
+                case "overlap" :
+                    self.showAlert(message: "이미 사용중인 닉네임 입니다")
+                    break
+                case "fail" :
+                    self.showAlert(message: "네트워크 오류")
+                    break
+                default :
+                    break
                 }
-                break
-            case "same" :
-                self.showAlert(message: "이전 비밀번호와 동일합니다")
-                break
-            case "overlap" :
-                self.showAlert(message: "이미 사용중인 닉네임 입니다")
-                break
-            case "fail" :
+                ApiService.shared.loadingStop()
+                
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+                ApiService.shared.loadingStop()
                 self.showAlert(message: "네트워크 오류")
-                break
-            default :
-                break
+                
             }
-        }
-    }
-    
-    func showAlert(message: String) {
-        DispatchQueue.main.async {
-            let alertMessage = UIAlertController(title: "", message: message, preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "확인", style: .cancel)
-            
-            alertMessage.addAction(cancelAction)
-            self.present(alertMessage, animated: true, completion: nil)
         }
     }
     

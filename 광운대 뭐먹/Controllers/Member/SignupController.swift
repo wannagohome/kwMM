@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import Alamofire
+import SwiftyJSON
 
 class SignupController: UIViewController, UITextFieldDelegate {
     
@@ -277,22 +279,54 @@ class SignupController: UIViewController, UITextFieldDelegate {
                 self.nicknameConfirmed = false
             } else {
                 let dicToSend: [String: Any] = ["func":"checkusable nickname", "nickname":nickname]
-                let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//                let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//                
+//                ApiService.shared.getData(dataToSend: dataToSend){ (result: UsableId) in
+//                    if result.data! == "overlapped" {
+//                        self.nicknameConfirmLable.text = "이미 사용중인 닉네임 입니다"
+//                        self.nicknameConfirmLable.textColor = UIColor.red
+//                        self.nicknameConfirmLable.isHidden = false
+//                        self.nicknameCheckIconImageView.isHidden = true
+//                        self.nicknameTextField.backgroundColor = UIColor(red: 1, green: 0, blue: 0, alpha: 0.1)
+//                        self.nicknameConfirmed = false
+//                    } else {
+//                        self.nicknameConfirmed = true
+//                        self.nicknameConfirmLable.text = "사용가능한 닉네임 입니다"
+//                        self.nicknameConfirmLable.textColor = UIColor.blue
+//                        self.nicknameCheckIconImageView.isHidden = false
+//                        self.nicknameTextField.backgroundColor = UIColor.clear
+//                    }
+//                }
                 
-                ApiService.shared.getData(dataToSend: dataToSend){ (result: UsableId) in
-                    if result.data! == "overlapped" {
-                        self.nicknameConfirmLable.text = "이미 사용중인 닉네임 입니다"
-                        self.nicknameConfirmLable.textColor = UIColor.red
-                        self.nicknameConfirmLable.isHidden = false
-                        self.nicknameCheckIconImageView.isHidden = true
-                        self.nicknameTextField.backgroundColor = UIColor(red: 1, green: 0, blue: 0, alpha: 0.1)
-                        self.nicknameConfirmed = false
-                    } else {
-                        self.nicknameConfirmed = true
-                        self.nicknameConfirmLable.text = "사용가능한 닉네임 입니다"
-                        self.nicknameConfirmLable.textColor = UIColor.blue
-                        self.nicknameCheckIconImageView.isHidden = false
-                        self.nicknameTextField.backgroundColor = UIColor.clear
+                ApiService.shared.loadingStart()
+                AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend, encoding: JSONEncoding.default).responseJSON {
+                    (responds) in
+                    switch responds.result {
+                        
+                    case .success(let value):
+                        let json:JSON = JSON(value)
+                        if json["data"].string == "overlapped" {
+                            self.nicknameConfirmLable.text = "이미 사용중인 닉네임 입니다"
+                            self.nicknameConfirmLable.textColor = UIColor.red
+                            self.nicknameConfirmLable.isHidden = false
+                            self.nicknameCheckIconImageView.isHidden = true
+                            self.nicknameTextField.backgroundColor = UIColor(red: 1, green: 0, blue: 0, alpha: 0.1)
+                            self.nicknameConfirmed = false
+                        } else {
+                            self.nicknameConfirmed = true
+                            self.nicknameConfirmLable.text = "사용가능한 닉네임 입니다"
+                            self.nicknameConfirmLable.textColor = UIColor.blue
+                            self.nicknameCheckIconImageView.isHidden = false
+                            self.nicknameTextField.backgroundColor = UIColor.clear
+                        }
+                        ApiService.shared.loadingStop()
+                        
+                        
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                        ApiService.shared.loadingStop()
+                        self.showAlert(message: "네트워크 오류")
+                        
                     }
                 }
             }
@@ -338,22 +372,54 @@ class SignupController: UIViewController, UITextFieldDelegate {
                 idCheckIconImageView.isHidden = true
             } else {
                 let dicToSend: [String: Any] = ["func":"checkusable id", "id":id]
-                let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//                let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//
+//                ApiService.shared.getData(dataToSend: dataToSend){ (result: UsableId) in
+//                    if result.data! == "overlapped" {
+//                        self.idConfirmLable.text = "이미 사용중인 아이디 입니다"
+//                        self.idConfirmLable.textColor = UIColor.red
+//                        self.idConfirmLable.isHidden = false
+//                        textField.backgroundColor = UIColor(red: 1, green: 0, blue: 0, alpha: 0.1)
+//                        self.idConfirmed = false
+//                        self.idCheckIconImageView.isHidden = true
+//                    } else {
+//                        textField.backgroundColor = UIColor.clear
+//                        self.idConfirmLable.text = "사용가능한 아이디 입니다"
+//                        self.idConfirmLable.textColor = UIColor.blue
+//                        self.idConfirmed = true
+//                        self.idCheckIconImageView.isHidden = false
+//                    }
+//                }
                 
-                ApiService.shared.getData(dataToSend: dataToSend){ (result: UsableId) in
-                    if result.data! == "overlapped" {
-                        self.idConfirmLable.text = "이미 사용중인 아이디 입니다"
-                        self.idConfirmLable.textColor = UIColor.red
-                        self.idConfirmLable.isHidden = false
-                        textField.backgroundColor = UIColor(red: 1, green: 0, blue: 0, alpha: 0.1)
-                        self.idConfirmed = false
-                        self.idCheckIconImageView.isHidden = true
-                    } else {
-                        textField.backgroundColor = UIColor.clear
-                        self.idConfirmLable.text = "사용가능한 아이디 입니다"
-                        self.idConfirmLable.textColor = UIColor.blue
-                        self.idConfirmed = true
-                        self.idCheckIconImageView.isHidden = false
+                ApiService.shared.loadingStart()
+                AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend, encoding: JSONEncoding.default).responseJSON {
+                    (responds) in
+                    switch responds.result {
+                        
+                    case .success(let value):
+                        let json:JSON = JSON(value)
+                        if json["data"].string == "overlapped" {
+                            self.idConfirmLable.text = "이미 사용중인 아이디 입니다"
+                            self.idConfirmLable.textColor = UIColor.red
+                            self.idConfirmLable.isHidden = false
+                            textField.backgroundColor = UIColor(red: 1, green: 0, blue: 0, alpha: 0.1)
+                            self.idConfirmed = false
+                            self.idCheckIconImageView.isHidden = true
+                        } else {
+                            textField.backgroundColor = UIColor.clear
+                            self.idConfirmLable.text = "사용가능한 아이디 입니다"
+                            self.idConfirmLable.textColor = UIColor.blue
+                            self.idConfirmed = true
+                            self.idCheckIconImageView.isHidden = false
+                        }
+                        ApiService.shared.loadingStop()
+                        
+                        
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                        ApiService.shared.loadingStop()
+                        self.showAlert(message: "네트워크 오류")
+                        
                     }
                 }
             }
@@ -406,7 +472,7 @@ class SignupController: UIViewController, UITextFieldDelegate {
 //        view.loadingIndicator()
         let webmail: String = emailTextField.text ?? ""
         let dicToSend: [String: Any] = ["func":"certify", "webmail":webmail]
-        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
         let indexOfDomainOfMail = webmail.firstIndex(of: "@")
         
         if indexOfDomainOfMail == nil {
@@ -417,28 +483,66 @@ class SignupController: UIViewController, UITextFieldDelegate {
             self.showAlert(message: string)
         } else {
             
-            ApiService.shared.getData(dataToSend: dataToSend){ (result: Certify) in
-                if result.data! == "usable webmail" {
-                    self.insertedEmail = webmail
-                    self.emailConfirmIconImageView.isHidden = false
-                    self.emailConfirmTextField.isHidden = false
-                    self.keyConfirmButton.isHidden = false
-                    UIView.animate(withDuration: 0.7, delay: 0, options: [], animations: {
-                        self.emailConfirmButton.alpha = 0
-                        self.emailConfirmIconImageView.alpha = 1
-                        self.emailConfirmTextField.alpha = 1
-                        self.keyConfirmButton.alpha = 1
-                    }, completion: { (bool: Bool) in
-                        self.emailConfirmButton.isHidden = true
-                    })
+//            ApiService.shared.getData(dataToSend: dataToSend){ (result: Certify) in
+//                if result.data! == "usable webmail" {
+//                    self.insertedEmail = webmail
+//                    self.emailConfirmIconImageView.isHidden = false
+//                    self.emailConfirmTextField.isHidden = false
+//                    self.keyConfirmButton.isHidden = false
+//                    UIView.animate(withDuration: 0.7, delay: 0, options: [], animations: {
+//                        self.emailConfirmButton.alpha = 0
+//                        self.emailConfirmIconImageView.alpha = 1
+//                        self.emailConfirmTextField.alpha = 1
+//                        self.keyConfirmButton.alpha = 1
+//                    }, completion: { (bool: Bool) in
+//                        self.emailConfirmButton.isHidden = true
+//                    })
+//
+//                    self.showAlert(message: "인증번호 발송 완료")
+//                } else if result.data! == "unusable webmail" {
+//                    self.showAlert(message: "이미 사용중인 메일 입니다")
+//                } else if result.data! == "unexist webmail"{
+//                    self.showAlert(message: "존재하지 않는 메일 입니다")
+//                }
+////                self.view.loadingIndicator(false)
+//            }
+            
+            ApiService.shared.loadingStart()
+            AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend, encoding: JSONEncoding.default).responseJSON {
+                (responds) in
+                switch responds.result {
                     
-                    self.showAlert(message: "인증번호 발송 완료")
-                } else if result.data! == "unusable webmail" {
-                    self.showAlert(message: "이미 사용중인 메일 입니다")
-                } else if result.data! == "unexist webmail"{
-                    self.showAlert(message: "존재하지 않는 메일 입니다")
+                case .success(let value):
+                    let json:JSON = JSON(value)
+                    if json["data"].string == "usable webmail" {
+                        self.insertedEmail = webmail
+                        self.emailConfirmIconImageView.isHidden = false
+                        self.emailConfirmTextField.isHidden = false
+                        self.keyConfirmButton.isHidden = false
+                        UIView.animate(withDuration: 0.7, delay: 0, options: [], animations: {
+                            self.emailConfirmButton.alpha = 0
+                            self.emailConfirmIconImageView.alpha = 1
+                            self.emailConfirmTextField.alpha = 1
+                            self.keyConfirmButton.alpha = 1
+                        }, completion: { (bool: Bool) in
+                            self.emailConfirmButton.isHidden = true
+                        })
+                        
+                        self.showAlert(message: "인증번호 발송 완료")
+                    } else if json["data"].string == "unusable webmail" {
+                        self.showAlert(message: "이미 사용중인 메일 입니다")
+                    } else if json["data"].string == "unexist webmail"{
+                        self.showAlert(message: "존재하지 않는 메일 입니다")
+                    }
+                    ApiService.shared.loadingStop()
+                    
+                    
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    ApiService.shared.loadingStop()
+                    self.showAlert(message: "네트워크 오류")
+                    
                 }
-//                self.view.loadingIndicator(false)
             }
             
         }
@@ -482,17 +586,43 @@ class SignupController: UIViewController, UITextFieldDelegate {
         keyConfirmButton.resignFirstResponder()
         
         let dicToSend: [String: Any] = ["func":"checkkey", "webmail": insertedEmail ?? "", "key": emailConfirmTextField.text ?? ""]
-        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//
+//        ApiService.shared.getData(dataToSend: dataToSend){ (result: SimpleResponse) in
+//            print(result.data!)
+//            if result.data! == "ok" {
+//                self.showAlert(message: "인증 되었습니다")
+//                self.simpleAnimation()
+//                self.emailConfirmed = true
+//            } else if result.data! == "fail" {
+//                self.showAlert(message: "인증번호가 다릅니다")
+//                self.emailConfirmed  = false
+//            }
+//        }
         
-        ApiService.shared.getData(dataToSend: dataToSend){ (result: SimpleResponse) in
-            print(result.data!)
-            if result.data! == "ok" {
-                self.showAlert(message: "인증 되었습니다")
-                self.simpleAnimation()
-                self.emailConfirmed = true
-            } else if result.data! == "fail" {
-                self.showAlert(message: "인증번호가 다릅니다")
-                self.emailConfirmed  = false
+        ApiService.shared.loadingStart()
+        AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend, encoding: JSONEncoding.default).responseJSON {
+            (responds) in
+            switch responds.result {
+                
+            case .success(let value):
+                let json:JSON = JSON(value)
+                if json["data"].string == "ok" {
+                    self.showAlert(message: "인증 되었습니다")
+                    self.simpleAnimation()
+                    self.emailConfirmed = true
+                } else if json["data"].string == "fail" {
+                    self.showAlert(message: "인증번호가 다릅니다")
+                    self.emailConfirmed  = false
+                }
+                ApiService.shared.loadingStop()
+                
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+                ApiService.shared.loadingStop()
+                self.showAlert(message: "네트워크 오류")
+                
             }
         }
     }
@@ -514,11 +644,31 @@ class SignupController: UIViewController, UITextFieldDelegate {
         
         if passwordConfirmed && nicknameConfirmed && idConfirmed {
             let dicToSend = ["func":"signup", "id":idTextField.text!, "pwd":self.passwordTextField.text!.getSha256String(), "nickname":userNickname!, "webmail":self.insertedEmail!]
-            let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
-            
-            ApiService.shared.getData(dataToSend: dataToSend) { (result: UsableId) in
-                if result.data! == "signup ok" {
-                    self.showAlert(message: "가입 완료")
+//            let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//
+//            ApiService.shared.getData(dataToSend: dataToSend) { (result: UsableId) in
+//                if result.data! == "signup ok" {
+//                    self.showAlert(message: "가입 완료")
+//                }
+//            }
+            ApiService.shared.loadingStart()
+            AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend, encoding: JSONEncoding.default).responseJSON {
+                (responds) in
+                switch responds.result {
+                    
+                case .success(let value):
+                    let json:JSON = JSON(value)
+                    if json["data"].string == "signup ok" {
+                        self.showAlert(message: "가입 완료")
+                    }
+                    ApiService.shared.loadingStop()
+                    
+                    
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    ApiService.shared.loadingStop()
+                    self.showAlert(message: "네트워크 오류")
+                    
                 }
             }
         }
@@ -553,20 +703,6 @@ class SignupController: UIViewController, UITextFieldDelegate {
                 self.checkbox.isHidden = true
                 self.nextButoon.isHidden = true
             })
-        }
-    }
-    
-    func showAlert(message: String) {
-        DispatchQueue.main.async {
-            let alertMessage = UIAlertController(title: "", message: message, preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "확인", style: .cancel) { (temp: UIAlertAction) in
-                if message == "가입 완료" {
-                    self.presentingViewController?.dismiss(animated: true)
-                }
-            }
-            
-            alertMessage.addAction(cancelAction)
-            self.present(alertMessage, animated: true, completion: nil)
         }
     }
     
@@ -778,7 +914,7 @@ class SignupController: UIViewController, UITextFieldDelegate {
         textView.layer.borderWidth = 0.5
         textView.layer.cornerRadius = 5
         textView.textColor = lightblack
-        textView.isUserInteractionEnabled = false
+        textView.isUserInteractionEnabled = true
         textView.text = """
         ('광운대뭐먹')은(는) 개인정보보호법에 따라 이용자의 개인정보 보호 및 권익을 보호하고 개인정보와 관련한 이용자의 고충을 원활하게 처리할 수 있도록 다음과 같은 처리방침을 두고 있습니다.
 

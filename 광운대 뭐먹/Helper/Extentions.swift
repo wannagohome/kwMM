@@ -8,6 +8,7 @@
 
 import UIKit
 import CommonCrypto
+import SwiftyJSON
 
 class Global {
     static var shared = Global()
@@ -221,6 +222,20 @@ extension UIViewController {
     @objc func dismissKeyboard() {
         view.endEditing(true)
     }
+    
+    func showAlert(message: String) {
+        DispatchQueue.main.async {
+            let alertMessage = UIAlertController(title: "", message: message, preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: "확인", style: .cancel) { (temp: UIAlertAction) in
+                if message == "가입 완료" {
+                    self.presentingViewController?.dismiss(animated: true)
+                }
+            }
+            
+            alertMessage.addAction(cancelAction)
+            self.present(alertMessage, animated: true, completion: nil)
+        }
+    }
 }
 
 extension UIImageView {
@@ -320,5 +335,11 @@ extension MainViewController {
         notiTextView.translatesAutoresizingMaskIntoConstraints = false
         
         
+    }
+}
+
+extension JSON {
+    public init(_ jsonArray:[JSON]) {
+        self.init(jsonArray.map { $0.object })
     }
 }

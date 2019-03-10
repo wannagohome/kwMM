@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import Alamofire
+import SwiftyJSON
 
 class MenuReviewCell: ReviewBaseCell {
     
@@ -105,22 +107,58 @@ class MenuReviewCell: ReviewBaseCell {
                 }
             }
         } else {
-            showAlert(message: "로그인이 필요합니다")
+            if self.dinnerController != nil {
+                self.dinnerController!.showAlert(message: "로그인 후에 가능합니다")
+            } else {
+                self.reviewController!.showAlert(message: "로그인 후에 가능합니다")
+            }
         }
         
     }
     
     @objc func report(_ content: String) {
-        let writerId = review?.id
-        let reviewId = review?.reviewId
+        let writerId = reviewJson?["id"].string
+        let reviewId = reviewJson?["reviewId"].int
         
         let dicToSend: [String : Any] = ["func":"report","reviewId":reviewId!, "id":writerId!, "contents":content]
-        let dataToSend: Data = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//        let dataToSend: Data = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//
+//        ApiService.shared.getData(dataToSend: dataToSend){ (response: SimpleResponse) in
+//            if response.data == "신고 접수" {
+//
+//            } else if response.data == "이미 신고" {
+//
+//            }
+//        }
         
-        ApiService.shared.getData(dataToSend: dataToSend){ (response: SimpleResponse) in
-            if response.data == "신고 접수" {
+        AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend, encoding: JSONEncoding.default).responseJSON {
+            (responds) in
+            switch responds.result {
                 
-            } else if response.data == "이미 신고" {
+            case .success(let value):
+                let json:JSON = JSON(value)
+                if json["data"].string == "신고 접수" {
+                    if self.dinnerController != nil {
+                        self.dinnerController!.showAlert(message: "신고가 접수되었습니다")
+                    } else {
+                        self.reviewController!.showAlert(message: "신고가 접수되었습니다")
+                    }
+                } else if json["data"].string == "이미 신고" {
+                    if self.dinnerController != nil {
+                        self.dinnerController!.showAlert(message: "이미 신고하신 리뷰 입니다")
+                    } else {
+                        self.reviewController!.showAlert(message: "이미 신고하신 리뷰 입니다")
+                    }
+                }
+                
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+                if self.dinnerController != nil {
+                    self.dinnerController!.showAlert(message: "네트워크 오류")
+                } else {
+                    self.reviewController!.showAlert(message: "네트워크 오류")
+                }
                 
             }
         }
@@ -131,46 +169,55 @@ class MenuReviewCell: ReviewBaseCell {
         let reviewId = sender.tag
         if id != ""{
             let dicToSend: [String: Any] = ["func":"recommend","reviewId":reviewId, "id":id]
-            let dataToSend: Data = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//            let dataToSend: Data = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//
+//            //FIXME: change view if needed
+//            ApiService.shared.getData(dataToSend: dataToSend){ (response: SimpleResponse) in
+//
+//                if response.data! == "recommended" {
+//                    self.recommendButton.setImage(UIImage(named: "thumbcolor"), for: .normal)
+//                    self.recommendNumberLable.text = String(self.recommend! + 1)
+//                    self.recommend! += 1
+//                } else {
+//                    self.recommendButton.setImage(UIImage(named: "thumb"), for: .normal)
+//                    self.recommendNumberLable.text = String(self.recommend! - 1)
+//                    self.recommend! -= 1
+//                }
+//            }
             
-            //FIXME: change view if needed
-            ApiService.shared.getData(dataToSend: dataToSend){ (response: SimpleResponse) in
-                
-                if response.data! == "recommended" {
-                    self.recommendButton.setImage(UIImage(named: "thumbcolor"), for: .normal)
-                    self.recommendNumberLable.text = String(self.recommend! + 1)
-                    self.recommend! += 1
-                } else {
-                    self.recommendButton.setImage(UIImage(named: "thumb"), for: .normal)
-                    self.recommendNumberLable.text = String(self.recommend! - 1)
-                    self.recommend! -= 1
+            AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend, encoding: JSONEncoding.default).responseJSON {
+                (responds) in
+                switch responds.result {
+                    
+                case .success(let value):
+                    let json:JSON = JSON(value)
+                    if json["data"].string == "recommended" {
+                        self.recommendButton.setImage(UIImage(named: "thumbcolor"), for: .normal)
+                        self.recommendNumberLable.text = String(self.recommend! + 1)
+                        self.recommend! += 1
+                    } else {
+                        self.recommendButton.setImage(UIImage(named: "thumb"), for: .normal)
+                        self.recommendNumberLable.text = String(self.recommend! - 1)
+                        self.recommend! -= 1
+                    }
+                    
+                    
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    if self.dinnerController != nil {
+                        self.dinnerController!.showAlert(message: "네트워크 오류")
+                    } else {
+                        self.reviewController!.showAlert(message: "네트워크 오류")
+                    }
+                    
                 }
             }
         } else {
-            self.showAlert(message: "로그인 후에 가능합니다")
-        }
-    }
-    
-    func showAlert(message: String) {
-        DispatchQueue.main.async {
-            let alertMessage = UIAlertController(title: "", message: message, preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "확인", style: .cancel) { (temp: UIAlertAction) in
-                if message == "가입 완료" {
-                    if self.dinnerController != nil {
-                        self.dinnerController!.presentingViewController?.dismiss(animated: true)
-                    } else {
-                        self.reviewController!.presentingViewController?.dismiss(animated: true)
-                    }
-                }
-            }
-            
-            alertMessage.addAction(cancelAction)
             if self.dinnerController != nil {
-                self.dinnerController!.present(alertMessage, animated: true, completion: nil)
+                self.dinnerController!.showAlert(message: "로그인 후에 가능합니다")
             } else {
-                self.dinnerController!.present(alertMessage, animated: true, completion: nil)
+                self.reviewController!.showAlert(message: "로그인 후에 가능합니다")
             }
         }
     }
-    
 }

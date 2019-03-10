@@ -8,6 +8,8 @@
 
 import Foundation
 import UIKit
+import Alamofire
+import SwiftyJSON
 
 class FindViewController: UIViewController {
     struct Certify: Decodable {
@@ -175,38 +177,84 @@ class FindViewController: UIViewController {
         
         let webmail: String = emailTextField.text ?? ""
         let dicToSend: [String: Any] = ["func":"find2", "webmail":webmail]
-        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
-        ApiService.shared.getData(dataToSend: dataToSend){ (result: FindID) in
-            
-            self.userid = result.id!
-            let id:String = result.id!
-            let attributes = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue, NSAttributedString.Key.font : UIFont.systemFont(ofSize: 20)] as [NSAttributedString.Key : Any]
-            let attributedString = NSMutableAttributedString(string: id + " 입니다.")
-            attributedString.addAttributes(attributes, range: (id + " 입니다." as NSString).range(of: id))
-            attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: themeColor, range: (id + " 입니다." as NSString).range(of: id))
-            self.idLable.attributedText = attributedString
-            
-            UIView.animate(withDuration: 0.7, animations: {
-                self.emailIconImageView.alpha = 0
-                self.emailTextField.alpha = 0
-                self.emailConfirmIconImageView.alpha = 0
-                self.emailConfirmTextField.alpha = 0
-                self.keyConfirmButton.alpha = 0
+//        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//        ApiService.shared.getData(dataToSend: dataToSend){ (result: FindID) in
+//            
+//            self.userid = result.id!
+//            let id:String = result.id!
+//            let attributes = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue, NSAttributedString.Key.font : UIFont.systemFont(ofSize: 20)] as [NSAttributedString.Key : Any]
+//            let attributedString = NSMutableAttributedString(string: id + " 입니다.")
+//            attributedString.addAttributes(attributes, range: (id + " 입니다." as NSString).range(of: id))
+//            attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: themeColor, range: (id + " 입니다." as NSString).range(of: id))
+//            self.idLable.attributedText = attributedString
+//            
+//            UIView.animate(withDuration: 0.7, animations: {
+//                self.emailIconImageView.alpha = 0
+//                self.emailTextField.alpha = 0
+//                self.emailConfirmIconImageView.alpha = 0
+//                self.emailConfirmTextField.alpha = 0
+//                self.keyConfirmButton.alpha = 0
+//                
+//                self.notiLable1.alpha = 1
+//                self.notiLable3.alpha = 1
+//                self.notiLable4.alpha = 1
+//                self.idLable.alpha = 1
+//                self.tempPwdButton.alpha = 1
+//                
+//            }, completion: { (bool: Bool) in
+//                self.emailIconImageView.isHidden = true
+//                self.emailTextField.isHidden = true
+//                self.emailConfirmIconImageView.isHidden = true
+//                self.emailConfirmTextField.isHidden = true
+//                self.keyConfirmButton.isHidden = true
+//            })
+//            
+//        }
+        
+        ApiService.shared.loadingStart()
+        AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend as Parameters, encoding: JSONEncoding.default).responseJSON {
+            (responds) in
+            switch responds.result {
                 
-                self.notiLable1.alpha = 1
-                self.notiLable3.alpha = 1
-                self.notiLable4.alpha = 1
-                self.idLable.alpha = 1
-                self.tempPwdButton.alpha = 1
+            case .success(let value):
+                let json:JSON = JSON(value)
+                self.userid = json["id"].string
+                let id:String = json["id"].string!
+                let attributes = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue, NSAttributedString.Key.font : UIFont.systemFont(ofSize: 20)] as [NSAttributedString.Key : Any]
+                let attributedString = NSMutableAttributedString(string: id + " 입니다.")
+                attributedString.addAttributes(attributes, range: (id + " 입니다." as NSString).range(of: id))
+                attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: themeColor, range: (id + " 입니다." as NSString).range(of: id))
+                self.idLable.attributedText = attributedString
                 
-            }, completion: { (bool: Bool) in
-                self.emailIconImageView.isHidden = true
-                self.emailTextField.isHidden = true
-                self.emailConfirmIconImageView.isHidden = true
-                self.emailConfirmTextField.isHidden = true
-                self.keyConfirmButton.isHidden = true
-            })
-            
+                UIView.animate(withDuration: 0.7, animations: {
+                    self.emailIconImageView.alpha = 0
+                    self.emailTextField.alpha = 0
+                    self.emailConfirmIconImageView.alpha = 0
+                    self.emailConfirmTextField.alpha = 0
+                    self.keyConfirmButton.alpha = 0
+                    
+                    self.notiLable1.alpha = 1
+                    self.notiLable3.alpha = 1
+                    self.notiLable4.alpha = 1
+                    self.idLable.alpha = 1
+                    self.tempPwdButton.alpha = 1
+                    
+                }, completion: { (bool: Bool) in
+                    self.emailIconImageView.isHidden = true
+                    self.emailTextField.isHidden = true
+                    self.emailConfirmIconImageView.isHidden = true
+                    self.emailConfirmTextField.isHidden = true
+                    self.keyConfirmButton.isHidden = true
+                })
+                ApiService.shared.loadingStop()
+                
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+                ApiService.shared.loadingStop()
+                self.showAlert(message: "네트워크 오류")
+                
+            }
         }
         
     }
@@ -215,13 +263,36 @@ class FindViewController: UIViewController {
         keyConfirmButton.resignFirstResponder()
         
         let dicToSend: [String: Any] = ["func":"checkkey", "webmail": insertedEmail ?? "", "key": emailConfirmTextField.text ?? ""]
-        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//
+//        ApiService.shared.getData(dataToSend: dataToSend){ (result: SimpleResponse) in
+//            if result.data == "ok" {
+//                self.simpleAnimation()
+//            } else {
+//                self.showAlert(message: "인증번호가 다릅니다")
+//            }
+//        }
         
-        ApiService.shared.getData(dataToSend: dataToSend){ (result: SimpleResponse) in
-            if result.data == "ok" {
-                self.simpleAnimation()
-            } else {
-                self.showAlert(message: "인증번호가 다릅니다")
+        ApiService.shared.loadingStart()
+        AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend as Parameters, encoding: JSONEncoding.default).responseJSON {
+            (responds) in
+            switch responds.result {
+                
+            case .success(let value):
+                let json:JSON = JSON(value)
+                if json["data"].string == "ok" {
+                    self.simpleAnimation()
+                } else {
+                    self.showAlert(message: "인증번호가 다릅니다")
+                }
+                ApiService.shared.loadingStop()
+                
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+                ApiService.shared.loadingStop()
+                self.showAlert(message: "네트워크 오류")
+                
             }
         }
     }
@@ -229,7 +300,7 @@ class FindViewController: UIViewController {
     @objc func requestNumber() {
         let webmail: String = emailTextField.text ?? ""
         let dicToSend: [String: Any] = ["func":"find1", "webmail":webmail]
-        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
         let indexOfDomainOfMail = webmail.firstIndex(of: "@")
         
         if indexOfDomainOfMail == nil {
@@ -240,31 +311,73 @@ class FindViewController: UIViewController {
             self.showAlert(message: string)
         } else {
             
-            ApiService.shared.getData(dataToSend: dataToSend){ (result: Certify) in
-                if result.data! == "exist" {
-                    self.insertedEmail = webmail
-                    self.emailConfirmIconImageView.isHidden = false
-                    self.emailConfirmTextField.isHidden = false
-                    self.keyConfirmButton.isHidden = false
-                    UIView.animate(withDuration: 0.7, delay: 0, options: [], animations: {
-                        self.emailConfirmButton.alpha = 0
-                        self.emailConfirmIconImageView.alpha = 1
-                        self.emailConfirmTextField.alpha = 1
-                        self.keyConfirmButton.alpha = 1
-                    }, completion: { (bool: Bool) in
-                        self.emailConfirmButton.isHidden = true
-                    })
+//            ApiService.shared.getData(dataToSend: dataToSend){ (result: Certify) in
+//                if result.data! == "exist" {
+//                    self.insertedEmail = webmail
+//                    self.emailConfirmIconImageView.isHidden = false
+//                    self.emailConfirmTextField.isHidden = false
+//                    self.keyConfirmButton.isHidden = false
+//                    UIView.animate(withDuration: 0.7, delay: 0, options: [], animations: {
+//                        self.emailConfirmButton.alpha = 0
+//                        self.emailConfirmIconImageView.alpha = 1
+//                        self.emailConfirmTextField.alpha = 1
+//                        self.keyConfirmButton.alpha = 1
+//                    }, completion: { (bool: Bool) in
+//                        self.emailConfirmButton.isHidden = true
+//                    })
+//
+//                    self.showAlert(message: "인증번호 발송 완료")
+//                } else if result.data! == "unexist" {
+//                    self.showAlert(message: "가입되지 않은 메일 입니다")
+//                } else if result.data! == "google" {
+//                    self.showAlert(message: """
+//                        구글을 통해 가입한 계정은
+//                        해당 서비스를 이용하실 수 없습니다.
+//                        """)
+//                }
+//            }
+            
+            ApiService.shared.loadingStart()
+            AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend as Parameters, encoding: JSONEncoding.default).responseJSON {
+                (responds) in
+                switch responds.result {
                     
-                    self.showAlert(message: "인증번호 발송 완료")
-                } else if result.data! == "unexist" {
-                    self.showAlert(message: "가입되지 않은 메일 입니다")
-                } else if result.data! == "google" {
-                    self.showAlert(message: """
+                case .success(let value):
+                    let json:JSON = JSON(value)
+                    if json["data"].string == "exist" {
+                        self.insertedEmail = webmail
+                        self.emailConfirmIconImageView.isHidden = false
+                        self.emailConfirmTextField.isHidden = false
+                        self.keyConfirmButton.isHidden = false
+                        UIView.animate(withDuration: 0.7, delay: 0, options: [], animations: {
+                            self.emailConfirmButton.alpha = 0
+                            self.emailConfirmIconImageView.alpha = 1
+                            self.emailConfirmTextField.alpha = 1
+                            self.keyConfirmButton.alpha = 1
+                        }, completion: { (bool: Bool) in
+                            self.emailConfirmButton.isHidden = true
+                        })
+                        
+                        self.showAlert(message: "인증번호 발송 완료")
+                    } else if json["data"].string == "unexist" {
+                        self.showAlert(message: "가입되지 않은 메일 입니다")
+                    } else if json["data"].string == "google" {
+                        self.showAlert(message: """
                         구글을 통해 가입한 계정은
                         해당 서비스를 이용하실 수 없습니다.
                         """)
+                    }
+                    ApiService.shared.loadingStop()
+                    
+                    
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    ApiService.shared.loadingStop()
+                    self.showAlert(message: "네트워크 오류")
+                    
                 }
             }
+
             
         }
     }
@@ -283,36 +396,61 @@ class FindViewController: UIViewController {
         
         let id: String = userid!
         let dicToSend: [String: Any] = ["func":"edit pw", "id":id, "pw":tempPassword.getSha256String()]
-        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//        
+//        ApiService.shared.getData(dataToSend: dataToSend){ (result: SimpleResponse) in
+//            if result.data != "fail" {
+//                self.tempPasswordTextView.text = tempPassword
+//                let attributes = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue, NSAttributedString.Key.font : UIFont.systemFont(ofSize: 20)] as [NSAttributedString.Key : Any]
+//                let attributedString = NSMutableAttributedString(string:tempPassword)
+//                attributedString.addAttributes(attributes, range: (tempPassword as NSString).range(of: tempPassword))
+//                attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: themeColor, range: (tempPassword as NSString).range(of: tempPassword))
+//                self.tempPasswordTextView.attributedText = attributedString
+//                self.tempPasswordTextView.textAlignment = .center
+//                self.notiLable5.isHidden = false
+//                self.tempPasswordTextView.isHidden = false
+//                UIView.animate(withDuration: 0.7, delay: 0, options: [], animations: {
+//                    self.tempPasswordTextView.alpha = 1
+//                    self.notiLable5.alpha = 1
+//                }, completion: { (bool: Bool) in
+//                    
+//                })
+//            }
+//        }
         
-        ApiService.shared.getData(dataToSend: dataToSend){ (result: SimpleResponse) in
-            if result.data != "fail" {
-                self.tempPasswordTextView.text = tempPassword
-                let attributes = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue, NSAttributedString.Key.font : UIFont.systemFont(ofSize: 20)] as [NSAttributedString.Key : Any]
-                let attributedString = NSMutableAttributedString(string:tempPassword)
-                attributedString.addAttributes(attributes, range: (tempPassword as NSString).range(of: tempPassword))
-                attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: themeColor, range: (tempPassword as NSString).range(of: tempPassword))
-                self.tempPasswordTextView.attributedText = attributedString
-                self.tempPasswordTextView.textAlignment = .center
-                self.notiLable5.isHidden = false
-                self.tempPasswordTextView.isHidden = false
-                UIView.animate(withDuration: 0.7, delay: 0, options: [], animations: {
-                    self.tempPasswordTextView.alpha = 1
-                    self.notiLable5.alpha = 1
-                }, completion: { (bool: Bool) in
-                    
-                })
+        ApiService.shared.loadingStart()
+        AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend as Parameters, encoding: JSONEncoding.default).responseJSON {
+            (responds) in
+            switch responds.result {
+                
+            case .success(let value):
+                let json:JSON = JSON(value)
+                if json["data"] != "fail" {
+                    self.tempPasswordTextView.text = tempPassword
+                    let attributes = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue, NSAttributedString.Key.font : UIFont.systemFont(ofSize: 20)] as [NSAttributedString.Key : Any]
+                    let attributedString = NSMutableAttributedString(string:tempPassword)
+                    attributedString.addAttributes(attributes, range: (tempPassword as NSString).range(of: tempPassword))
+                    attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: themeColor, range: (tempPassword as NSString).range(of: tempPassword))
+                    self.tempPasswordTextView.attributedText = attributedString
+                    self.tempPasswordTextView.textAlignment = .center
+                    self.notiLable5.isHidden = false
+                    self.tempPasswordTextView.isHidden = false
+                    UIView.animate(withDuration: 0.7, delay: 0, options: [], animations: {
+                        self.tempPasswordTextView.alpha = 1
+                        self.notiLable5.alpha = 1
+                    }, completion: { (bool: Bool) in
+                        
+                    })
+                }
+                ApiService.shared.loadingStop()
+                
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+                ApiService.shared.loadingStop()
+                self.showAlert(message: "네트워크 오류")
+                
             }
-        }
-    }
-    
-    func showAlert(message: String) {
-        DispatchQueue.main.async {
-            let alertMessage = UIAlertController(title: "", message: message, preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "확인", style: .cancel)
-            
-            alertMessage.addAction(cancelAction)
-            self.present(alertMessage, animated: true, completion: nil)
         }
     }
     

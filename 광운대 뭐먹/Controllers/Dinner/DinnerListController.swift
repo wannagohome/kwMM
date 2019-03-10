@@ -6,7 +6,10 @@
 //  Copyright © 2018 Peter Jang. All rights reserved.
 //
 
+import Foundation
 import UIKit
+import Alamofire
+import SwiftyJSON
 
 class DinnerListController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, DinnerForCategoryCellDelegate{
     
@@ -36,13 +39,14 @@ class DinnerListController: UIViewController, UICollectionViewDelegate, UICollec
         navigationController?.isNavigationBarHidden = false
         setupMenuBar()
         setupCollectionView()
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = false
         if Global.shared.isErrorLableShowing { Global.removeErrorLable() }
     }
-
+    
     override func viewDidLayoutSubviews() {
         if !viewDidAppear {
             let selectedIndex = NSIndexPath(item: initialIndex, section: 0)
@@ -121,7 +125,7 @@ class DinnerListController: UIViewController, UICollectionViewDelegate, UICollec
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         weak var cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellIDs[indexPath.item], for: indexPath) as? DinnerForCategoryCell
         cell?.delegate = self
-//        cell.fetchLists()
+        cell?.dinnerListController = self
         return cell!
         
     }

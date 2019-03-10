@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import Alamofire
+import SwiftyJSON
 
 class ReviewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
@@ -14,7 +16,8 @@ class ReviewController: UIViewController, UICollectionViewDelegate, UICollection
     var menuName: String?
     var menuId: Int?
     let id: String = UserDefaults().string(forKey: "id") ?? ""
-    var reviews: Reviews?
+//    var reviews: Reviews?
+    var reviewJson: JSON?
     
     lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -46,12 +49,31 @@ class ReviewController: UIViewController, UICollectionViewDelegate, UICollection
     func fetchLists() {
         if menuName != nil {
             let dicToSend: [String: Any] = ["func":"리뷰","menuId":String(menuId!), "id":id, "order":order]
-            let dataToSend: Data = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//            let dataToSend: Data = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//
+//            ApiService.shared.getData(dataToSend: dataToSend){ (reviews: Reviews) in
+//                self.reviews = reviews
+//                self.collectionView.reloadData()
+//
+//            }
             
-            ApiService.shared.getData(dataToSend: dataToSend){ (reviews: Reviews) in
-                self.reviews = reviews
-                self.collectionView.reloadData()
-                
+            ApiService.shared.loadingStart()
+            AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend, encoding: JSONEncoding.default).responseJSON {
+                (responds) in
+                switch responds.result {
+                    
+                case .success(let value):
+                    self.reviewJson = JSON(value)
+                    self.collectionView.reloadData()
+                    ApiService.shared.loadingStop()
+                    
+                    
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    ApiService.shared.loadingStop()
+                    self.showAlert(message: "네트워크 오류")
+                    
+                }
             }
         }
     }
@@ -105,22 +127,27 @@ class ReviewController: UIViewController, UICollectionViewDelegate, UICollection
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if reviews?.reviews?.count == 0 {
+//        if reviews?.reviews?.count == 0 {
+//            return 1
+//        } else{
+//            return reviews?.reviews?.count ?? 0
+//        }
+        if reviewJson?["reviews"].count == 0 {
             return 1
-        } else{
-            return reviews?.reviews?.count ?? 0
+        } else {
+            return reviewJson?["reviews"].count ?? 0
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if reviews?.reviews?.count == 0 {
+        if reviewJson?["reviews"].count == 0 {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "crying", for: indexPath) as! CryingCell
             collectionView.backgroundColor = UIColor.white
             return cell
         } else {
             collectionView.backgroundColor = UIColor(white: 0.9, alpha: 1)
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "review", for: indexPath) as! MenuReviewCell
-            cell.review = reviews?.reviews?[indexPath.row]
+            cell.reviewJson = reviewJson?["reviews"][indexPath.row]
             cell.reviewController = self
             cell.backgroundColor = UIColor.white
             
@@ -138,28 +165,30 @@ class ReviewController: UIViewController, UICollectionViewDelegate, UICollection
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         var heightPlus: Int
         
-        if reviews?.reviews?.count == 0 {
+        if reviewJson?["reviews"].count == 0 {
             return CGSize(width: view.frame.width - 70, height: view.frame.height - 120)
         }
         let approximateWidth = view.frame.width - 30 - 5 - 5 - 10
         let size = CGSize(width: approximateWidth, height: 1000)
         let attribute = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)]
-        let estimatedFrame = NSString(string: (reviews?.reviews?[indexPath.row].contents)!).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attribute, context: nil)
-        
-        let temp = (reviews?.reviews?[indexPath.row].reviewPic)!
+        //        let estimatedFrame = NSString(string: (reviews?.reviews?[indexPath.row].contents)!).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attribute, context: nil)
+        let estimatedFrame = NSString(string: (reviewJson?["reviews"][indexPath.row]["contents"].string)!).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attribute, context: nil)
+        //        let temp = (reviews?.reviews?[indexPath.row].reviewPic)!
+        let temp = (reviewJson?["reviews"][indexPath.row]["reviewPic"].string)!
         let index = temp.lastIndex(of: "/")
         let def = temp[index! ..< temp.endIndex]
+        
         if def == "/default" {
             heightPlus = 0
+            
         } else {
             heightPlus = 150
         }
-        
-        if (reviews?.reviews?[indexPath.row].contents == "") {
+        if (reviewJson?["reviews"][indexPath.row]["contents"].string == "") {
             heightPlus -= 20
         }
-
-        return CGSize(width: view.frame.width, height: estimatedFrame.height + 100 + CGFloat(heightPlus))
+        
+        return CGSize(width: view.bounds.width, height: estimatedFrame.height + 120 + CGFloat(heightPlus))
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {

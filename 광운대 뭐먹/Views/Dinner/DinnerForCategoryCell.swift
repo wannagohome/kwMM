@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import Alamofire
+import SwiftyJSON
 
 class DinnerForCategoryCell: BaseCell, UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     
@@ -22,9 +24,30 @@ class DinnerForCategoryCell: BaseCell, UICollectionViewDataSource, UICollectionV
     }()
     
     var dinners: Dinner?
+    var json: JSON?
     weak var delegate: DinnerForCategoryCellDelegate?
+    weak var dinnerListController: DinnerListController?
+    var dicToSend:Parameters = ["func":"categoryList", "category":categories[0]]
     
     func fetchLists() {
+        ApiService.shared.loadingStart()
+        AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend, encoding: JSONEncoding.default).responseJSON {
+            (responds) in
+            switch responds.result {
+                
+            case .success(let value):
+                self.json = JSON(value)
+                self.collectionView.reloadData()
+                ApiService.shared.loadingStop()
+                
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+                ApiService.shared.loadingStop()
+                self.dinnerListController?.showAlert(message: "네트워크 오류")
+                
+            }
+        }
     }
     
     override func setupViews() {
@@ -42,13 +65,23 @@ class DinnerForCategoryCell: BaseCell, UICollectionViewDataSource, UICollectionV
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return dinners?.list?.count ?? 0
+        if json != nil {
+            return json?["list"].count ?? 0
+        } else {
+            return dinners?.list?.count ?? 0
+        }
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: cellId, for: indexPath) as! DinnerListCell
         
-        cell.dinnerList = dinners?.list?[indexPath.row]
+        if json != nil {
+            cell.dinnerListJson = json?["list"][indexPath.row]
+        } else {
+            cell.dinnerList = dinners?.list?[indexPath.row]
+        }
+        
         cell.backgroundColor = .white
         
         return cell
@@ -74,7 +107,7 @@ class DinnerForCategoryCell: BaseCell, UICollectionViewDataSource, UICollectionV
     
     func delegateAction(_ index: Int) {
         if let del = self.delegate {
-            del.moveToDinnerController((dinners?.list?[index].dinnerName)!, (dinners?.list?[index].rate)!)
+            del.moveToDinnerController((json?["list"][index]["dinnerName"].string)!, (json?["list"][index]["rate"].double)!)
         }
     }
 }
@@ -86,73 +119,43 @@ protocol DinnerForCategoryCellDelegate: class {
 
 class KoreanDishCell: DinnerForCategoryCell {
     override func fetchLists() {
-        let dicToSend = ["func":"categoryList", "category":categories[0]]
-        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+        dicToSend = ["func":"categoryList", "category":categories[0]]
         
-        ApiService.shared.getData(dataToSend: dataToSend){ (dinners: Dinner) in
-            
-            self.dinners = dinners
-            self.collectionView.reloadData()
-            
-        }
+        super.fetchLists()
     }
 }
 
 class ChineseFoodCell: DinnerForCategoryCell {
     override func fetchLists() {
-        let dicToSend = ["func":"categoryList", "category":categories[1]]
-        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+        dicToSend = ["func":"categoryList", "category":categories[1]]
         
-        ApiService.shared.getData(dataToSend: dataToSend){ (dinners: Dinner) in
-            
-            self.dinners = dinners
-            self.collectionView.reloadData()
-            
-        }
+        super.fetchLists()
     }
 }
 
 class JapeneseFood: DinnerForCategoryCell {
     override func fetchLists() {
-        let dicToSend = ["func":"categoryList", "category":categories[2]]
-        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+        dicToSend = ["func":"categoryList", "category":categories[2]]
         
-        ApiService.shared.getData(dataToSend: dataToSend){ (dinners: Dinner) in
-            
-            self.dinners = dinners
-            self.collectionView.reloadData()
-            
-        }
+        super.fetchLists()
     }
 }
 
 
 class SnackBarCell: DinnerForCategoryCell {
     override func fetchLists() {
-        let dicToSend = ["func":"categoryList", "category":categories[3]]
-        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+        dicToSend = ["func":"categoryList", "category":categories[3]]
         
-        ApiService.shared.getData(dataToSend: dataToSend){ (dinners: Dinner) in
-            
-            self.dinners = dinners
-            self.collectionView.reloadData()
-            
-        }
+        super.fetchLists()
     }
 }
 
 
 class NoodleCell: DinnerForCategoryCell {
     override func fetchLists() {
-        let dicToSend = ["func":"categoryList", "category":categories[4]]
-        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+        dicToSend = ["func":"categoryList", "category":categories[4]]
         
-        ApiService.shared.getData(dataToSend: dataToSend){ (dinners: Dinner) in
-            
-            self.dinners = dinners
-            self.collectionView.reloadData()
-            
-        }
+        super.fetchLists()
     }
 }
 
@@ -160,29 +163,17 @@ class NoodleCell: DinnerForCategoryCell {
 
 class ChickenCell: DinnerForCategoryCell {
     override func fetchLists() {
-        let dicToSend = ["func":"categoryList", "category":categories[5]]
-        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+        dicToSend = ["func":"categoryList", "category":categories[5]]
         
-        ApiService.shared.getData(dataToSend: dataToSend){ (dinners: Dinner) in
-            
-            self.dinners = dinners
-            self.collectionView.reloadData()
-            
-        }
+        super.fetchLists()
     }
 }
 
 class PizzaCell: DinnerForCategoryCell {
     override func fetchLists() {
-        let dicToSend = ["func":"categoryList", "category":"햄버거"]
-        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+        dicToSend = ["func":"categoryList", "category":"햄버거"]
         
-        ApiService.shared.getData(dataToSend: dataToSend){ (dinners: Dinner) in
-            
-            self.dinners = dinners
-            self.collectionView.reloadData()
-            
-        }
+        super.fetchLists()
     }
 }
 
@@ -190,14 +181,8 @@ class PizzaCell: DinnerForCategoryCell {
 
 class CoffeeAndDessertCell: DinnerForCategoryCell {
     override func fetchLists() {
-        let dicToSend = ["func":"categoryList", "category":categories[7]]
-        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+        dicToSend = ["func":"categoryList", "category":categories[7]]
         
-        ApiService.shared.getData(dataToSend: dataToSend){ (dinners: Dinner) in
-            
-            self.dinners = dinners
-            self.collectionView.reloadData()
-            
-        }
+        super.fetchLists()
     }
 }

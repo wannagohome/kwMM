@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import Alamofire
+import SwiftyJSON
 
 class MyReviewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
@@ -67,11 +69,32 @@ class MyReviewController: UIViewController, UICollectionViewDelegate, UICollecti
         let cancle = UIAlertAction(title: "취소", style: .cancel)
         let ok = UIAlertAction(title: "삭제", style: .destructive) { (_) in
             let dicToSend: [String : Any] = ["func":"review delete", "reviewId":reviewId]
-            let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//            let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//
+//            ApiService.shared.getData(dataToSend: dataToSend){ (result: SimpleResponse) in
+//                if result.data! == "delete" {
+//                    self.fetchLists()
+//                }
+//            }
             
-            ApiService.shared.getData(dataToSend: dataToSend){ (result: SimpleResponse) in
-                if result.data! == "delete" {
-                    self.fetchLists()
+            ApiService.shared.loadingStart()
+            AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend, encoding: JSONEncoding.default).responseJSON {
+                (responds) in
+                switch responds.result {
+                    
+                case .success(let value):
+                    let json:JSON = JSON(value)
+                    if json["data"].string == "delete" {
+                        self.fetchLists()
+                    }
+                    ApiService.shared.loadingStop()
+                    
+                    
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    ApiService.shared.loadingStop()
+                    self.showAlert(message: "네트워크 오류")
+                    
                 }
             }
         }
@@ -110,37 +133,67 @@ class MyReviewController: UIViewController, UICollectionViewDelegate, UICollecti
         showDeleteDialog(reviewId: reviewId)
     }
     
-    var reviews: Reviews?
+//    var reviews: Reviews?
+    var json: JSON?
     
     func fetchLists() {
         let ueserId: String? = UserDefaults().string(forKey: "id")
         let dicToSend: [String: Any] = ["func":"myReview","id":ueserId ?? ""]
-        let dataToSend: Data = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//        let dataToSend: Data = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//
+//        ApiService.shared.getData(dataToSend: dataToSend){ (reviews: Reviews) in
+//            self.reviews = reviews
+//            if reviews.reviews?.count != 0 {
+//                self.collectionView.reloadData()
+//            } else {
+//                self.collectionView.removeFromSuperview()
+//                self.notificationImage.image = UIImage(named: "리뷰 없음")
+//                self.setupViews()
+//            }
+//        }
         
-        ApiService.shared.getData(dataToSend: dataToSend){ (reviews: Reviews) in
-            self.reviews = reviews
-            if reviews.reviews?.count != 0 {
-                self.collectionView.reloadData()
-            } else {
-                self.collectionView.removeFromSuperview()
-                self.notificationImage.image = UIImage(named: "리뷰 없음")
-                self.setupViews()
+        ApiService.shared.loadingStart()
+        AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend, encoding: JSONEncoding.default).responseJSON {
+            (responds) in
+            switch responds.result {
+                
+            case .success(let value):
+                self.json = JSON(value)
+                if self.json?["reviews"].count != 0 {
+                    self.collectionView.reloadData()
+                } else {
+                    self.collectionView.removeFromSuperview()
+                    self.notificationImage.image = UIImage(named: "리뷰 없음")
+                    self.setupViews()
+                }
+                ApiService.shared.loadingStop()
+                
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+                ApiService.shared.loadingStop()
+                self.showAlert(message: "네트워크 오류")
+                
             }
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return reviews?.reviews?.count ?? 0
+//        return reviews?.reviews?.count ?? 0
+        return json?["reviews"].count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         weak var cell: MyReviewCell? = collectionView.dequeueReusableCell(withReuseIdentifier: "review", for: indexPath) as? MyReviewCell
-        cell?.review = reviews?.reviews?[indexPath.item]
+//        cell?.review = reviews?.reviews?[indexPath.item]
+        cell?.reviewJson = json?["reviews"][indexPath.item]
         cell?.myReviewController = self
         cell?.backgroundColor = UIColor.white
         
-        cell?.dinnerNameLabel.text = (reviews?.reviews?[indexPath.item].restaurantName)! + " - "
-        cell?.menuNameLabel.text = reviews?.reviews?[indexPath.item].menuName
+//        cell?.dinnerNameLabel.text = (reviews?.reviews?[indexPath.item].restaurantName)! + " - "
+//        cell?.menuNameLabel.text = reviews?.reviews?[indexPath.item].menuName
+        cell?.dinnerNameLabel.text = (json?["reviews"][indexPath.item]["restaurantName"].string)! + " - "
+        cell?.menuNameLabel.text = json?["reviews"][indexPath.item]["menuName"].string
         cell?.setNeedsUpdateConstraints()
         cell?.updateConstraintsIfNeeded()
         cell?.layer.borderWidth = 0.3
@@ -154,25 +207,24 @@ class MyReviewController: UIViewController, UICollectionViewDelegate, UICollecti
         let approximateWidth = view.frame.width - 30 - 5 - 5 - 10
         let size = CGSize(width: approximateWidth, height: 1000)
         let attribute = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)]
-        let estimatedFrame = NSString(string: (reviews?.reviews?[indexPath.row].contents)!).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attribute, context: nil)
-        
-        let temp = (reviews?.reviews?[indexPath.row].reviewPic)!
+        //        let estimatedFrame = NSString(string: (reviews?.reviews?[indexPath.row].contents)!).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attribute, context: nil)
+        let estimatedFrame = NSString(string: (json?["reviews"][indexPath.row]["contents"].string)!).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attribute, context: nil)
+        //        let temp = (reviews?.reviews?[indexPath.row].reviewPic)!
+        let temp = (json?["reviews"][indexPath.row]["reviewPic"].string)!
         let index = temp.lastIndex(of: "/")
         let def = temp[index! ..< temp.endIndex]
+        
         if def == "/default" {
             heightPlus = 0
-            if (reviews?.reviews?[indexPath.row].contents)!.count == 0 {
-                heightPlus = -20
-            }
+            
         } else {
             heightPlus = 150
         }
-        if (reviews?.reviews?[indexPath.row].contents == "") {
+        if (json?["reviews"][indexPath.row]["contents"].string == "") {
             heightPlus -= 20
         }
         
-        
-        return CGSize(width: view.frame.width, height: estimatedFrame.height + 100 + CGFloat(heightPlus))
+        return CGSize(width: view.bounds.width, height: estimatedFrame.height + 120 + CGFloat(heightPlus))
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {

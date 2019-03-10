@@ -9,6 +9,10 @@
 import UIKit
 import Foundation
 import SystemConfiguration
+import Alamofire
+import SwiftyJSON
+import GoogleSignIn
+
 
 let cellId = "cellId"
 let categories = ["한식","중식","일식","분식","면","치킨","햄버거/피자","디저트"]
@@ -32,8 +36,6 @@ class MainViewController: UICollectionViewController, UICollectionViewDelegateFl
         collectionView?.backgroundColor = UIColor(red: 252/255, green: 1, blue: 251/255, alpha: 1)
         collectionView.contentInset = UIEdgeInsets(top: collectionView.bounds.height/18, left: collectionView.bounds.width/10, bottom: 40, right: collectionView.bounds.width/10)
         collectionView?.register(MainCell.self, forCellWithReuseIdentifier: cellId)
-        
-        
     }
 
     
@@ -49,6 +51,10 @@ class MainViewController: UICollectionViewController, UICollectionViewDelegateFl
             checkUsable()
         }
         checkOnce = true
+        if UserDefaults().bool(forKey: "isLoggedIn") {
+            banCheck()
+        }
+        
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -56,6 +62,38 @@ class MainViewController: UICollectionViewController, UICollectionViewDelegateFl
         var topCorrect = (textView.bounds.size.height - textView.contentSize.height * textView.zoomScale) / 2
         topCorrect = topCorrect < 0.0 ? 0.0 : topCorrect;
         textView.contentInset.top = topCorrect
+    }
+    
+    func banCheck() {
+        let dicToSend = ["func":"connect", "id":UserDefaults().string(forKey: "id")]
+        ApiService.shared.loadingStart()
+        AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend as Parameters, encoding: JSONEncoding.default).responseJSON {
+            (responds) in
+            switch responds.result {
+                
+            case .success(let value):
+                let json:JSON = JSON(value)
+                if json["data"].string == "ban" {
+                    self.showAlert(message: "부적절한 행동으로 인해 이용이 금지되었습니다")
+                    if UserDefaults().bool(forKey: "google") {
+                        GIDSignIn.sharedInstance()?.signOut()
+                    }
+                    UserDefaults.standard.set(false, forKey: "google")
+                    UserDefaults.standard.set(false, forKey: "isLoggedIn")
+                    UserDefaults.standard.set("", forKey: "nickname")
+                    UserDefaults.standard.set("", forKey: "profile")
+                    UserDefaults.standard.set("", forKey: "id")
+                }
+                ApiService.shared.loadingStop()
+                
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+                ApiService.shared.loadingStop()
+                self.showAlert(message: "네트워크 오류")
+                
+            }
+        }
     }
     
     

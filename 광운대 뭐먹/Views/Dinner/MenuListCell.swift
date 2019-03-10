@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import Alamofire
+import SwiftyJSON
 
 protocol MenuListCellDelegate: class {
     func moveToReviewController(_ menuName: String, _ menuId: Int)
@@ -27,11 +29,26 @@ class MenuListCell: BaseCell, UITableViewDelegate, UITableViewDataSource, TableV
             tableView.reloadData()
         }
     }
+    var jsonSet: JSON? {
+        didSet {
+            json = jsonSet
+            if jsonSet != nil {
+                var count: Int = jsonSet?["restaurants"].count ?? 1
+                if count == 0 { count=1 }
+                for _ in 1...count {
+                    self.isOpen.append(false)
+                }
+            }
+            tableView.reloadData()
+        }
+    }
     var menus: MenuList?
     var dinnerName: String?
     var isOpen: [Bool] = []
+    var didLoad: Bool = false
     weak var delegate: MenuListCellDelegate?
-    
+    weak var dinnerController: DinnerController?
+    var json: JSON?
     
     lazy var tableView: UITableView = {
         let tb = UITableView(frame: .zero, style: .grouped)
@@ -56,32 +73,57 @@ class MenuListCell: BaseCell, UITableViewDelegate, UITableViewDataSource, TableV
     }
     
     func fetchLists() {
-        if dinnerName != nil {
+        if dinnerName != nil && !didLoad {
             
             let dicToSend = ["func":"메뉴 아이폰", "restaurantName":dinnerName!]
-            let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//            let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
             
             //FIXME: change view if needed
-            ApiService.shared.getData(dataToSend: dataToSend){ (menus: MenuList) in
-                
-                self.menus = menus
-                let count = menus.restaurants?.count ?? 0
-                for _ in 1...count {
-                    self.isOpen.append(true)
+//            ApiService.shared.getData(dataToSend: dataToSend){ (menus: MenuList) in
+//
+//                self.menus = menus
+//                let count = menus.restaurants?.count ?? 0
+//                for _ in 1...count {
+//                    self.isOpen.append(true)
+//                }
+//                self.tableView.reloadData()
+//
+//            }
+            ApiService.shared.loadingStart()
+            AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend, encoding: JSONEncoding.default).responseJSON {
+                (responds) in
+                switch responds.result {
+                    
+                case .success(let value):
+                    self.json = JSON(value)
+                    let count = self.json?["restaurants"].count ?? 0
+                    for _ in 1...count {
+                        self.isOpen.append(false)
+                    }
+                    self.tableView.reloadData()
+                    ApiService.shared.loadingStop()
+                    self.didLoad = true
+                    
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    ApiService.shared.loadingStop()
+                    self.dinnerController?.showAlert(message: "네트워크 오류")
+                    
                 }
-                self.tableView.reloadData()
-                
             }
+            
         }
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-        return menus?.restaurants?.count ?? 0
+//        return menus?.restaurants?.count ?? 0
+        return json?["restaurants"].count ?? 0
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if isOpen[section] {
-            return menus?.restaurants?[section].restaurant?.count ?? 0
+//            return menus?.restaurants?[section].restaurant?.count ?? 0
+            return json?["restaurants"][section]["restaurant"].count ?? 0
         } else {
             return 0
         }
@@ -94,7 +136,8 @@ class MenuListCell: BaseCell, UITableViewDelegate, UITableViewDataSource, TableV
         
         cell?.layer.borderWidth = 0.25
 //        cell.layer.addBorder([.bottom], color: UIColor.init(white: 0.9, alpha: 1), width: 0.27)
-        cell?.menuList = menus?.restaurants?[indexPath.section].restaurant![indexPath.item]
+//        cell?.menuList = menus?.restaurants?[indexPath.section].restaurant![indexPath.item]
+        cell?.json = json?["restaurants"][indexPath.section]["restaurant"][indexPath.item]
         cell?.backgroundColor = UIColor.white
         return cell!
     }
@@ -106,7 +149,8 @@ class MenuListCell: BaseCell, UITableViewDelegate, UITableViewDataSource, TableV
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: "header") as? MenuHeaderCell ?? MenuHeaderCell(reuseIdentifier: "header")
         
-        header.categoryLable.text = menus?.restaurants?[section].category
+//        header.categoryLable.text = menus?.restaurants?[section].category
+        header.categoryLable.text = json?["restaurants"][section]["category"].string
         header.arrowLabel.text = ">"
         header.setCollapsed(isOpen[section])
         
@@ -146,7 +190,8 @@ class MenuListCell: BaseCell, UITableViewDelegate, UITableViewDataSource, TableV
     
     func delegateAction(_ indexPath: IndexPath) {
         if let del = self.delegate {
-            del.moveToReviewController((menus?.restaurants?[indexPath.section].restaurant?[indexPath.item].menu)!, (menus?.restaurants?[indexPath.section].restaurant?[indexPath.item].menuId)!)
+//            del.moveToReviewController((menus?.restaurants?[indexPath.section].restaurant?[indexPath.item].menu)!, (menus?.restaurants?[indexPath.section].restaurant?[indexPath.item].menuId)!)
+            del.moveToReviewController((json?["restaurants"][indexPath.section]["restaurant"][indexPath.item]["menu"].string)!, (json?["restaurants"][indexPath.section]["restaurant"][indexPath.item]["menuId"].int)!)
         }
     }
 }
@@ -254,6 +299,13 @@ class MenuCell: UITableViewCell {
             priceLable.text = String(describing: (menuList?.price)!)
             rateLabel.text = String(format: "%.1f", (menuList?.rate)!)
 
+        }
+    }
+    var json: JSON? {
+        didSet {
+            menuNameLabel.text = json?["menu"].string
+            priceLable.text = String(describing: (json?["price"].int)!)
+            rateLabel.text = String(format: "%.1f", (json?["rate"].double)!)
         }
     }
     

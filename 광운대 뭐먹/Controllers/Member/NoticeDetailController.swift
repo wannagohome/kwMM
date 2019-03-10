@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import Alamofire
+import SwiftyJSON
 
 class NoticeDetailController: UIViewController {
     var id: String?
@@ -44,13 +46,33 @@ class NoticeDetailController: UIViewController {
     
     func fetchLists() {
         let dicToSend = ["func":"notice content", "id":id!]
-        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//        
+//        ApiService.shared.getData(dataToSend: dataToSend){ (content: NoticeContent) in
+//            
+//            self.titleLable.text = content.title
+//            self.contentLable.text = content.content
+//            
+//        }
         
-        ApiService.shared.getData(dataToSend: dataToSend){ (content: NoticeContent) in
-            
-            self.titleLable.text = content.title
-            self.contentLable.text = content.content
-            
+        ApiService.shared.loadingStart()
+        AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend as Parameters, encoding: JSONEncoding.default).responseJSON {
+            (responds) in
+            switch responds.result {
+                
+            case .success(let value):
+                let json:JSON = JSON(value)
+                self.titleLable.text = json["title"].string
+                self.contentLable.text = json["content"].string
+                ApiService.shared.loadingStop()
+                
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+                ApiService.shared.loadingStop()
+                self.showAlert(message: "네트워크 오류")
+                
+            }
         }
     }
     
