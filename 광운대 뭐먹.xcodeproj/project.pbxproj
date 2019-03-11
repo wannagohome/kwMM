@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AC11E63922365EE0007BDBEE /* EmptyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC11E63822365EE0007BDBEE /* EmptyViewController.swift */; };
 		AC13BD92221FA0530038D3FD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BD91221FA0530038D3FD /* AppDelegate.swift */; };
 		AC13BD99221FA0550038D3FD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AC13BD98221FA0550038D3FD /* Assets.xcassets */; };
 		AC13BD9C221FA0550038D3FD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AC13BD9A221FA0550038D3FD /* LaunchScreen.storyboard */; };
@@ -49,6 +50,7 @@
 /* Begin PBXFileReference section */
 		92F3ECCDE1327959DD2DB078 /* Pods-광운대 뭐먹.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-광운대 뭐먹.release.xcconfig"; path = "Pods/Target Support Files/Pods-광운대 뭐먹/Pods-광운대 뭐먹.release.xcconfig"; sourceTree = "<group>"; };
 		A95CF6ED2224988BA0E02AB6 /* libPods-광운대 뭐먹.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-광운대 뭐먹.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AC11E63822365EE0007BDBEE /* EmptyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyViewController.swift; sourceTree = "<group>"; };
 		AC13BD8E221FA0530038D3FD /* 광운대 뭐먹.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "광운대 뭐먹.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC13BD91221FA0530038D3FD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		AC13BD98221FA0550038D3FD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 			children = (
 				AC13BDB4221FA2160038D3FD /* TabBarController.swift */,
 				AC13BDA8221FA2160038D3FD /* PhotoDetailViewController.swift */,
+				AC11E63822365EE0007BDBEE /* EmptyViewController.swift */,
 				AC24F88F2220FC7200744D6B /* Dinner */,
 				AC24F8902220FC7B00744D6B /* Review */,
 				AC24F8912220FC7F00744D6B /* Member */,
@@ -401,6 +404,7 @@
 				AC13BDE1221FA2170038D3FD /* CategoryMenuBar.swift in Sources */,
 				AC13BDDD221FA2170038D3FD /* TabBarController.swift in Sources */,
 				AC13BDE2221FA2170038D3FD /* MenuReviewCell.swift in Sources */,
+				AC11E63922365EE0007BDBEE /* EmptyViewController.swift in Sources */,
 				AC13BDD4221FA2170038D3FD /* SignupController.swift in Sources */,
 				AC13BDDC221FA2170038D3FD /* NoticeController.swift in Sources */,
 				AC13BDCF221FA2170038D3FD /* EditController.swift in Sources */,

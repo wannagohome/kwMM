@@ -168,7 +168,7 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate 
                     
                     self.presentingViewController?.dismiss(animated: true)
                 } else if json["data"].string == "ban" {
-                    self.showAlert(message: "부적절한 행동으로 인해 이용이 금지되었습니다")
+                    self.showAlert(message: "부적절한 행동으로 인해 \((json["date"].string)!)까지 이용이 금지되었습니다")
                 } else {
                     DispatchQueue.main.async {
                         let alertMessage = UIAlertController(title: "", message: "아이디/비밀번호를 확인해주세요", preferredStyle: .alert)
@@ -240,7 +240,7 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate 
                         self.showAlert(message: "이미 가입되어 있는 이메일 입니다")
                         GIDSignIn.sharedInstance()?.signOut()
                     } else if json["data"].string == "ban" {
-                        self.showAlert(message: "부적절한 행동으로 인해 이용이 금지되었습니다")
+                        self.showAlert(message: "부적절한 행동으로 인해 \((json["date"].string)!)까지 이용이 금지되었습니다")
                     }
                     ApiService.shared.loadingStop()
                     

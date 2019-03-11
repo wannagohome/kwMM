@@ -74,8 +74,8 @@ class MemberController: UIViewController, UICollectionViewDelegate, UICollection
         view.addSubview(nicknameLabel)
         view.addSubview(logoutButton)
         view.addSubview(profileImageView)
-        
         view.addSubview(collectionView)
+        
         collectionView.anchor(top: logoImageView.bottomAnchor,
                               leading: view.leadingAnchor,
                               bottom: view.safeAreaLayoutGuide.bottomAnchor,
@@ -115,7 +115,6 @@ class MemberController: UIViewController, UICollectionViewDelegate, UICollection
                             padding: .init(top: 0, left: 0, bottom: 0, right: 20),
                             size: .init(width: 50, height: 20))
         logoutButton.centerYAnchor.constraint(equalTo: nicknameLabel.centerYAnchor).isActive = true
-        
     }
     
     private func fetchImage() {
@@ -151,7 +150,7 @@ class MemberController: UIViewController, UICollectionViewDelegate, UICollection
     
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 4
+        return 6
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -172,13 +171,31 @@ class MemberController: UIViewController, UICollectionViewDelegate, UICollection
         } else if indexPath.item == 3 {
             cell?.textLable.text = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
             cell?.arrowImageView.removeFromSuperview()
+            cell?.iconImageView.image = UIImage(named: "스패너")
             cell?.updateLable.text = updateString
+        } else if indexPath.item == 4 {
+            cell?.arrowImageView.removeFromSuperview()
+            cell?.textLable.text = "사용한 아이콘"
+            cell?.textLable.font = UIFont.systemFont(ofSize: 14)
+            cell?.iconImageView.removeFromSuperview()
+//            cell?.textLable.center = (cell?.contentView.center)!
+        } else if indexPath.item == 5 {
+            cell?.arrowImageView.removeFromSuperview()
+            cell?.textLable.text = "개인정보 이용 방침"
+            cell?.textLable.font = UIFont.systemFont(ofSize: 14)
+            cell?.iconImageView.removeFromSuperview()
+//            cell?.textLable.center = (cell?.contentView.center)!
         }
         return cell!
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: collectionView.bounds.width, height: 60)
+        if indexPath.item <= 3 {
+            return CGSize(width: collectionView.bounds.width, height: 60)
+        } else {
+            return CGSize(width: collectionView.bounds.width / 2 , height: 40)
+        }
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -211,7 +228,14 @@ class MemberController: UIViewController, UICollectionViewDelegate, UICollection
             if updateString == "업데이트가 필요 합니다" {
                 UIApplication.shared.open(URL(string: "itms-apps://itunes.apple.com/app/id1454978912")!, options: [:], completionHandler: nil)
             }
-            
+        } else if indexPath.item >= 4{
+            let emptyController = EmptyViewController()
+            if indexPath.item == 4 {
+                emptyController.text.text = Global.shared.iconRef
+            } else if indexPath.item == 5 {
+                emptyController.text.text = Global.shared.peersonalInfo
+            }
+            self.navigationController?.pushViewController(emptyController, animated: true)
         }
     }
     
@@ -413,4 +437,6 @@ class memberCell: BaseCell {
         imageView.accessibilityIdentifier = "arrow"
         return imageView
     }()
+    
+    
 }
