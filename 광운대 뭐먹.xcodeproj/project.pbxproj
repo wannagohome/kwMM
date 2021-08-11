@@ -8,20 +8,86 @@
 
 /* Begin PBXBuildFile section */
 		AC13BD92221FA0530038D3FD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BD91221FA0530038D3FD /* AppDelegate.swift */; };
-		AC13BD94221FA0530038D3FD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BD93221FA0530038D3FD /* ViewController.swift */; };
-		AC13BD97221FA0530038D3FD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AC13BD95221FA0530038D3FD /* Main.storyboard */; };
 		AC13BD99221FA0550038D3FD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AC13BD98221FA0550038D3FD /* Assets.xcassets */; };
 		AC13BD9C221FA0550038D3FD /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AC13BD9A221FA0550038D3FD /* LaunchScreen.storyboard */; };
+		AC13BDA4221FA0DA0038D3FD /* Podfile in Resources */ = {isa = PBXBuildFile; fileRef = AC13BDA3221FA0DA0038D3FD /* Podfile */; };
+		AC13BDCF221FA2170038D3FD /* EditController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDA6221FA2160038D3FD /* EditController.swift */; };
+		AC13BDD0221FA2170038D3FD /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDA7221FA2160038D3FD /* MainViewController.swift */; };
+		AC13BDD1221FA2170038D3FD /* PhotoDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDA8221FA2160038D3FD /* PhotoDetailViewController.swift */; };
+		AC13BDD2221FA2170038D3FD /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDA9221FA2160038D3FD /* LoginController.swift */; };
+		AC13BDD3221FA2170038D3FD /* ReviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDAA221FA2160038D3FD /* ReviewController.swift */; };
+		AC13BDD4221FA2170038D3FD /* SignupController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDAB221FA2160038D3FD /* SignupController.swift */; };
+		AC13BDD5221FA2170038D3FD /* NoticeDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDAC221FA2160038D3FD /* NoticeDetailController.swift */; };
+		AC13BDD6221FA2170038D3FD /* MyReviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDAD221FA2160038D3FD /* MyReviewController.swift */; };
+		AC13BDD7221FA2170038D3FD /* MemberController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDAE221FA2160038D3FD /* MemberController.swift */; };
+		AC13BDD8221FA2170038D3FD /* WriteReviewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDAF221FA2160038D3FD /* WriteReviewController.swift */; };
+		AC13BDD9221FA2170038D3FD /* FindViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDB0221FA2160038D3FD /* FindViewController.swift */; };
+		AC13BDDA221FA2170038D3FD /* DinnerInfoController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDB1221FA2160038D3FD /* DinnerInfoController.swift */; };
+		AC13BDDB221FA2170038D3FD /* DinnerController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDB2221FA2160038D3FD /* DinnerController.swift */; };
+		AC13BDDC221FA2170038D3FD /* NoticeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDB3221FA2160038D3FD /* NoticeController.swift */; };
+		AC13BDDD221FA2170038D3FD /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDB4221FA2160038D3FD /* TabBarController.swift */; };
+		AC13BDDE221FA2170038D3FD /* DinnerListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDB5221FA2160038D3FD /* DinnerListController.swift */; };
+		AC13BDDF221FA2170038D3FD /* MyReviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDB7221FA2160038D3FD /* MyReviewCell.swift */; };
+		AC13BDE1221FA2170038D3FD /* CategoryMenuBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDB9221FA2160038D3FD /* CategoryMenuBar.swift */; };
+		AC13BDE2221FA2170038D3FD /* MenuReviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDBA221FA2160038D3FD /* MenuReviewCell.swift */; };
+		AC13BDE5221FA2170038D3FD /* DinnerInfoMenuBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDBD221FA2160038D3FD /* DinnerInfoMenuBar.swift */; };
+		AC13BDE6221FA2170038D3FD /* DinnerForCategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDBE221FA2160038D3FD /* DinnerForCategoryCell.swift */; };
+		AC13BDE8221FA2170038D3FD /* MenuListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDC0221FA2160038D3FD /* MenuListCell.swift */; };
+		AC13BDE9221FA2170038D3FD /* DinnerInfoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDC1221FA2160038D3FD /* DinnerInfoCell.swift */; };
+		AC13BDEA221FA2170038D3FD /* DinnerListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDC2221FA2160038D3FD /* DinnerListCell.swift */; };
+		AC13BDEB221FA2170038D3FD /* EveryReviewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDC3221FA2160038D3FD /* EveryReviewCell.swift */; };
+		AC13BDEE221FA2170038D3FD /* ReviewBaseCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDC6221FA2160038D3FD /* ReviewBaseCell.swift */; };
+		AC13BDF0221FA2170038D3FD /* ApiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDC9221FA2160038D3FD /* ApiService.swift */; };
+		AC13BDF1221FA2170038D3FD /* Struncts.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDCA221FA2160038D3FD /* Struncts.swift */; };
+		AC13BDF2221FA2170038D3FD /* Extentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDCC221FA2170038D3FD /* Extentions.swift */; };
+		AC13BDF3221FA2170038D3FD /* CosmosDistrib.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDCD221FA2170038D3FD /* CosmosDistrib.swift */; };
+		AC13BDF4221FA2170038D3FD /* Checkbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC13BDCE221FA2170038D3FD /* Checkbox.swift */; };
+		AC13BDF6221FA9480038D3FD /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = AC13BDF5221FA9480038D3FD /* GoogleService-Info.plist */; };
+		E6316099E6E9CEB97CE5B2DA /* libPods-광운대 뭐먹.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A95CF6ED2224988BA0E02AB6 /* libPods-광운대 뭐먹.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		92F3ECCDE1327959DD2DB078 /* Pods-광운대 뭐먹.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-광운대 뭐먹.release.xcconfig"; path = "Pods/Target Support Files/Pods-광운대 뭐먹/Pods-광운대 뭐먹.release.xcconfig"; sourceTree = "<group>"; };
+		A95CF6ED2224988BA0E02AB6 /* libPods-광운대 뭐먹.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-광운대 뭐먹.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC13BD8E221FA0530038D3FD /* 광운대 뭐먹.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "광운대 뭐먹.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AC13BD91221FA0530038D3FD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		AC13BD93221FA0530038D3FD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		AC13BD96221FA0530038D3FD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		AC13BD98221FA0550038D3FD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AC13BD9B221FA0550038D3FD /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AC13BD9D221FA0550038D3FD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AC13BDA3221FA0DA0038D3FD /* Podfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Podfile; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		AC13BDA6221FA2160038D3FD /* EditController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditController.swift; sourceTree = "<group>"; };
+		AC13BDA7221FA2160038D3FD /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		AC13BDA8221FA2160038D3FD /* PhotoDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoDetailViewController.swift; sourceTree = "<group>"; };
+		AC13BDA9221FA2160038D3FD /* LoginController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
+		AC13BDAA221FA2160038D3FD /* ReviewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReviewController.swift; sourceTree = "<group>"; };
+		AC13BDAB221FA2160038D3FD /* SignupController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignupController.swift; sourceTree = "<group>"; };
+		AC13BDAC221FA2160038D3FD /* NoticeDetailController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NoticeDetailController.swift; sourceTree = "<group>"; };
+		AC13BDAD221FA2160038D3FD /* MyReviewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyReviewController.swift; sourceTree = "<group>"; };
+		AC13BDAE221FA2160038D3FD /* MemberController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberController.swift; sourceTree = "<group>"; };
+		AC13BDAF221FA2160038D3FD /* WriteReviewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WriteReviewController.swift; sourceTree = "<group>"; };
+		AC13BDB0221FA2160038D3FD /* FindViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FindViewController.swift; sourceTree = "<group>"; };
+		AC13BDB1221FA2160038D3FD /* DinnerInfoController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DinnerInfoController.swift; sourceTree = "<group>"; };
+		AC13BDB2221FA2160038D3FD /* DinnerController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DinnerController.swift; sourceTree = "<group>"; };
+		AC13BDB3221FA2160038D3FD /* NoticeController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NoticeController.swift; sourceTree = "<group>"; };
+		AC13BDB4221FA2160038D3FD /* TabBarController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
+		AC13BDB5221FA2160038D3FD /* DinnerListController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DinnerListController.swift; sourceTree = "<group>"; };
+		AC13BDB7221FA2160038D3FD /* MyReviewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyReviewCell.swift; sourceTree = "<group>"; };
+		AC13BDB9221FA2160038D3FD /* CategoryMenuBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CategoryMenuBar.swift; sourceTree = "<group>"; };
+		AC13BDBA221FA2160038D3FD /* MenuReviewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuReviewCell.swift; sourceTree = "<group>"; };
+		AC13BDBD221FA2160038D3FD /* DinnerInfoMenuBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DinnerInfoMenuBar.swift; sourceTree = "<group>"; };
+		AC13BDBE221FA2160038D3FD /* DinnerForCategoryCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DinnerForCategoryCell.swift; sourceTree = "<group>"; };
+		AC13BDC0221FA2160038D3FD /* MenuListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuListCell.swift; sourceTree = "<group>"; };
+		AC13BDC1221FA2160038D3FD /* DinnerInfoCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DinnerInfoCell.swift; sourceTree = "<group>"; };
+		AC13BDC2221FA2160038D3FD /* DinnerListCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DinnerListCell.swift; sourceTree = "<group>"; };
+		AC13BDC3221FA2160038D3FD /* EveryReviewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EveryReviewCell.swift; sourceTree = "<group>"; };
+		AC13BDC6221FA2160038D3FD /* ReviewBaseCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReviewBaseCell.swift; sourceTree = "<group>"; };
+		AC13BDC9221FA2160038D3FD /* ApiService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApiService.swift; sourceTree = "<group>"; };
+		AC13BDCA221FA2160038D3FD /* Struncts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Struncts.swift; sourceTree = "<group>"; };
+		AC13BDCC221FA2170038D3FD /* Extentions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extentions.swift; sourceTree = "<group>"; };
+		AC13BDCD221FA2170038D3FD /* CosmosDistrib.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CosmosDistrib.swift; sourceTree = "<group>"; };
+		AC13BDCE221FA2170038D3FD /* Checkbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Checkbox.swift; sourceTree = "<group>"; };
+		AC13BDF5221FA9480038D3FD /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		C6A6BD003BD7682B2B875134 /* Pods-광운대 뭐먹.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-광운대 뭐먹.debug.xcconfig"; path = "Pods/Target Support Files/Pods-광운대 뭐먹/Pods-광운대 뭐먹.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,17 +95,29 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E6316099E6E9CEB97CE5B2DA /* libPods-광운대 뭐먹.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		887BF1176551BBDBFD08341E /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A95CF6ED2224988BA0E02AB6 /* libPods-광운대 뭐먹.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		AC13BD85221FA0530038D3FD = {
 			isa = PBXGroup;
 			children = (
+				AC13BDA3221FA0DA0038D3FD /* Podfile */,
 				AC13BD90221FA0530038D3FD /* 광운대 뭐먹 */,
 				AC13BD8F221FA0530038D3FD /* Products */,
+				D7760CEDAD343F7A1E884402 /* Pods */,
+				887BF1176551BBDBFD08341E /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -54,14 +132,133 @@
 		AC13BD90221FA0530038D3FD /* 광운대 뭐먹 */ = {
 			isa = PBXGroup;
 			children = (
+				AC13BDC8221FA2160038D3FD /* Model */,
+				AC24F88E2220FC4B00744D6B /* Views */,
+				AC13BDA5221FA2160038D3FD /* Controllers */,
+				AC13BDCB221FA2170038D3FD /* Helper */,
 				AC13BD91221FA0530038D3FD /* AppDelegate.swift */,
-				AC13BD93221FA0530038D3FD /* ViewController.swift */,
-				AC13BD95221FA0530038D3FD /* Main.storyboard */,
 				AC13BD98221FA0550038D3FD /* Assets.xcassets */,
 				AC13BD9A221FA0550038D3FD /* LaunchScreen.storyboard */,
+				AC13BDF5221FA9480038D3FD /* GoogleService-Info.plist */,
 				AC13BD9D221FA0550038D3FD /* Info.plist */,
 			);
 			path = "광운대 뭐먹";
+			sourceTree = "<group>";
+		};
+		AC13BDA5221FA2160038D3FD /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				AC13BDB4221FA2160038D3FD /* TabBarController.swift */,
+				AC13BDA8221FA2160038D3FD /* PhotoDetailViewController.swift */,
+				AC24F88F2220FC7200744D6B /* Dinner */,
+				AC24F8902220FC7B00744D6B /* Review */,
+				AC24F8912220FC7F00744D6B /* Member */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		AC13BDC8221FA2160038D3FD /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				AC13BDC9221FA2160038D3FD /* ApiService.swift */,
+				AC13BDCA221FA2160038D3FD /* Struncts.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		AC13BDCB221FA2170038D3FD /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				AC13BDCC221FA2170038D3FD /* Extentions.swift */,
+				AC13BDCD221FA2170038D3FD /* CosmosDistrib.swift */,
+				AC13BDCE221FA2170038D3FD /* Checkbox.swift */,
+			);
+			path = Helper;
+			sourceTree = "<group>";
+		};
+		AC24F88E2220FC4B00744D6B /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AC24F8922220FC8900744D6B /* Dinner */,
+				AC24F8942220FC9800744D6B /* Review */,
+				AC24F8952220FCA000744D6B /* Member */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		AC24F88F2220FC7200744D6B /* Dinner */ = {
+			isa = PBXGroup;
+			children = (
+				AC13BDA7221FA2160038D3FD /* MainViewController.swift */,
+				AC13BDB5221FA2160038D3FD /* DinnerListController.swift */,
+				AC13BDB2221FA2160038D3FD /* DinnerController.swift */,
+				AC13BDB1221FA2160038D3FD /* DinnerInfoController.swift */,
+			);
+			path = Dinner;
+			sourceTree = "<group>";
+		};
+		AC24F8902220FC7B00744D6B /* Review */ = {
+			isa = PBXGroup;
+			children = (
+				AC13BDAA221FA2160038D3FD /* ReviewController.swift */,
+				AC13BDAD221FA2160038D3FD /* MyReviewController.swift */,
+				AC13BDAF221FA2160038D3FD /* WriteReviewController.swift */,
+			);
+			path = Review;
+			sourceTree = "<group>";
+		};
+		AC24F8912220FC7F00744D6B /* Member */ = {
+			isa = PBXGroup;
+			children = (
+				AC13BDAE221FA2160038D3FD /* MemberController.swift */,
+				AC13BDA9221FA2160038D3FD /* LoginController.swift */,
+				AC13BDAB221FA2160038D3FD /* SignupController.swift */,
+				AC13BDB3221FA2160038D3FD /* NoticeController.swift */,
+				AC13BDAC221FA2160038D3FD /* NoticeDetailController.swift */,
+				AC13BDB0221FA2160038D3FD /* FindViewController.swift */,
+				AC13BDA6221FA2160038D3FD /* EditController.swift */,
+			);
+			path = Member;
+			sourceTree = "<group>";
+		};
+		AC24F8922220FC8900744D6B /* Dinner */ = {
+			isa = PBXGroup;
+			children = (
+				AC13BDB9221FA2160038D3FD /* CategoryMenuBar.swift */,
+				AC13BDBD221FA2160038D3FD /* DinnerInfoMenuBar.swift */,
+				AC13BDC2221FA2160038D3FD /* DinnerListCell.swift */,
+				AC13BDBE221FA2160038D3FD /* DinnerForCategoryCell.swift */,
+				AC13BDC0221FA2160038D3FD /* MenuListCell.swift */,
+				AC13BDC1221FA2160038D3FD /* DinnerInfoCell.swift */,
+			);
+			path = Dinner;
+			sourceTree = "<group>";
+		};
+		AC24F8942220FC9800744D6B /* Review */ = {
+			isa = PBXGroup;
+			children = (
+				AC13BDC6221FA2160038D3FD /* ReviewBaseCell.swift */,
+				AC13BDBA221FA2160038D3FD /* MenuReviewCell.swift */,
+				AC13BDB7221FA2160038D3FD /* MyReviewCell.swift */,
+				AC13BDC3221FA2160038D3FD /* EveryReviewCell.swift */,
+			);
+			path = Review;
+			sourceTree = "<group>";
+		};
+		AC24F8952220FCA000744D6B /* Member */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Member;
+			sourceTree = "<group>";
+		};
+		D7760CEDAD343F7A1E884402 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				C6A6BD003BD7682B2B875134 /* Pods-광운대 뭐먹.debug.xcconfig */,
+				92F3ECCDE1327959DD2DB078 /* Pods-광운대 뭐먹.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -71,9 +268,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = AC13BDA0221FA0550038D3FD /* Build configuration list for PBXNativeTarget "광운대 뭐먹" */;
 			buildPhases = (
+				16B1E97469B1A3930EA3BBAC /* [CP] Check Pods Manifest.lock */,
 				AC13BD8A221FA0530038D3FD /* Sources */,
 				AC13BD8B221FA0530038D3FD /* Frameworks */,
 				AC13BD8C221FA0530038D3FD /* Resources */,
+				D11A0AA590A6C534427C2D9B /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -124,33 +323,107 @@
 			files = (
 				AC13BD9C221FA0550038D3FD /* LaunchScreen.storyboard in Resources */,
 				AC13BD99221FA0550038D3FD /* Assets.xcassets in Resources */,
-				AC13BD97221FA0530038D3FD /* Main.storyboard in Resources */,
+				AC13BDF6221FA9480038D3FD /* GoogleService-Info.plist in Resources */,
+				AC13BDA4221FA0DA0038D3FD /* Podfile in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		16B1E97469B1A3930EA3BBAC /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-광운대 뭐먹-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D11A0AA590A6C534427C2D9B /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-광운대 뭐먹/Pods-광운대 뭐먹-resources.sh",
+				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
+				"${PODS_ROOT}/GooglePlaces/Frameworks/GooglePlaces.framework/Resources/GooglePlaces.bundle",
+				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMaps.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GooglePlaces.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleSignIn.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-광운대 뭐먹/Pods-광운대 뭐먹-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		AC13BD8A221FA0530038D3FD /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AC13BD94221FA0530038D3FD /* ViewController.swift in Sources */,
+				AC13BDEB221FA2170038D3FD /* EveryReviewCell.swift in Sources */,
+				AC13BDDB221FA2170038D3FD /* DinnerController.swift in Sources */,
+				AC13BDE6221FA2170038D3FD /* DinnerForCategoryCell.swift in Sources */,
+				AC13BDE9221FA2170038D3FD /* DinnerInfoCell.swift in Sources */,
+				AC13BDF2221FA2170038D3FD /* Extentions.swift in Sources */,
+				AC13BDD5221FA2170038D3FD /* NoticeDetailController.swift in Sources */,
+				AC13BDE5221FA2170038D3FD /* DinnerInfoMenuBar.swift in Sources */,
+				AC13BDD3221FA2170038D3FD /* ReviewController.swift in Sources */,
+				AC13BDD2221FA2170038D3FD /* LoginController.swift in Sources */,
+				AC13BDDE221FA2170038D3FD /* DinnerListController.swift in Sources */,
+				AC13BDF0221FA2170038D3FD /* ApiService.swift in Sources */,
+				AC13BDD7221FA2170038D3FD /* MemberController.swift in Sources */,
+				AC13BDE1221FA2170038D3FD /* CategoryMenuBar.swift in Sources */,
+				AC13BDDD221FA2170038D3FD /* TabBarController.swift in Sources */,
+				AC13BDE2221FA2170038D3FD /* MenuReviewCell.swift in Sources */,
+				AC13BDD4221FA2170038D3FD /* SignupController.swift in Sources */,
+				AC13BDDC221FA2170038D3FD /* NoticeController.swift in Sources */,
+				AC13BDCF221FA2170038D3FD /* EditController.swift in Sources */,
+				AC13BDF4221FA2170038D3FD /* Checkbox.swift in Sources */,
+				AC13BDD8221FA2170038D3FD /* WriteReviewController.swift in Sources */,
+				AC13BDEA221FA2170038D3FD /* DinnerListCell.swift in Sources */,
+				AC13BDD9221FA2170038D3FD /* FindViewController.swift in Sources */,
+				AC13BDF1221FA2170038D3FD /* Struncts.swift in Sources */,
+				AC13BDDA221FA2170038D3FD /* DinnerInfoController.swift in Sources */,
+				AC13BDE8221FA2170038D3FD /* MenuListCell.swift in Sources */,
 				AC13BD92221FA0530038D3FD /* AppDelegate.swift in Sources */,
+				AC13BDDF221FA2170038D3FD /* MyReviewCell.swift in Sources */,
+				AC13BDD6221FA2170038D3FD /* MyReviewController.swift in Sources */,
+				AC13BDF3221FA2170038D3FD /* CosmosDistrib.swift in Sources */,
+				AC13BDD1221FA2170038D3FD /* PhotoDetailViewController.swift in Sources */,
+				AC13BDEE221FA2170038D3FD /* ReviewBaseCell.swift in Sources */,
+				AC13BDD0221FA2170038D3FD /* MainViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		AC13BD95221FA0530038D3FD /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				AC13BD96221FA0530038D3FD /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		AC13BD9A221FA0550038D3FD /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -280,37 +553,41 @@
 		};
 		AC13BDA1221FA0550038D3FD /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C6A6BD003BD7682B2B875134 /* Pods-광운대 뭐먹.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = YJQB4DVQ35;
 				INFOPLIST_FILE = "광운대 뭐먹/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.kwfood.--------------";
+				PRODUCT_BUNDLE_IDENTIFIER = org.kwfood.kwmm.kr;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
 		AC13BDA2221FA0550038D3FD /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 92F3ECCDE1327959DD2DB078 /* Pods-광운대 뭐먹.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = YJQB4DVQ35;
 				INFOPLIST_FILE = "광운대 뭐먹/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.kwfood.--------------";
+				PRODUCT_BUNDLE_IDENTIFIER = org.kwfood.kwmm.kr;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
