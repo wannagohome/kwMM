@@ -8,6 +8,8 @@
 
 import UIKit
 import GoogleSignIn
+import Alamofire
+import SwiftyJSON
 
 class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate {
     
@@ -128,26 +130,63 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate 
         let password = passwordTextField.text?.getSha256String()
         let dicToSend = ["func":"login", "id":userId, "pwd":password]
         
-        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//
+//        ApiService.shared.getData(dataToSend: dataToSend){ (loginResult: Login) in
+//
+//            if loginResult.data == "로그인" {
+//                UserDefaults.standard.set(loginResult.nickname, forKey: "nickname")
+//                UserDefaults.standard.set(loginResult.profile, forKey: "profile")
+//                UserDefaults.standard.set(true, forKey: "isLoggedIn")
+//                UserDefaults.standard.set(userId, forKey: "id")
+//
+//                self.presentingViewController?.dismiss(animated: true)
+//            } else {
+//                DispatchQueue.main.async {
+//                    let alertMessage = UIAlertController(title: "", message: "아이디/비밀번호를 확인해주세요", preferredStyle: .alert)
+//                    let cancelAction = UIAlertAction(title: "확인", style: .cancel)
+//
+//                    alertMessage.addAction(cancelAction)
+//
+//                    self.present(alertMessage, animated: true, completion: nil)
+//                }
+//            }
+//        }
         
-        ApiService.shared.getData(dataToSend: dataToSend){ (loginResult: Login) in
-            
-            if loginResult.data == "로그인" {
-                UserDefaults.standard.set(loginResult.nickname, forKey: "nickname")
-                UserDefaults.standard.set(loginResult.profile, forKey: "profile")
-                UserDefaults.standard.set(true, forKey: "isLoggedIn")
-                UserDefaults.standard.set(userId, forKey: "id")
+        ApiService.shared.loadingStart()
+        AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend as Parameters, encoding: JSONEncoding.default).responseJSON {
+            (responds) in
+            switch responds.result {
                 
-                self.presentingViewController?.dismiss(animated: true)
-            } else {
-                DispatchQueue.main.async {
-                    let alertMessage = UIAlertController(title: "", message: "아이디/비밀번호를 확인해주세요", preferredStyle: .alert)
-                    let cancelAction = UIAlertAction(title: "확인", style: .cancel)
+            case .success(let value):
+                let json:JSON = JSON(value)
+                if json["data"].string == "로그인" {
+                UserDefaults.standard.set(json["nickname"].string, forKey: "nickname")
+                UserDefaults.standard.set(json["profile"].string, forKey: "profile")
+                    UserDefaults.standard.set(true, forKey: "isLoggedIn")
+                    UserDefaults.standard.set(userId, forKey: "id")
                     
-                    alertMessage.addAction(cancelAction)
-                    
-                    self.present(alertMessage, animated: true, completion: nil)
+                    self.presentingViewController?.dismiss(animated: true)
+                } else if json["data"].string == "ban" {
+                    self.showAlert(message: "부적절한 행동으로 인해 이용이 금지되었습니다")
+                } else {
+                    DispatchQueue.main.async {
+                        let alertMessage = UIAlertController(title: "", message: "아이디/비밀번호를 확인해주세요", preferredStyle: .alert)
+                        let cancelAction = UIAlertAction(title: "확인", style: .cancel)
+                        
+                        alertMessage.addAction(cancelAction)
+                        
+                        self.present(alertMessage, animated: true, completion: nil)
+                    }
                 }
+                ApiService.shared.loadingStop()
+                
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+                ApiService.shared.loadingStop()
+                self.showAlert(message: "네트워크 오류")
+                
             }
         }
     }
@@ -167,31 +206,52 @@ class LoginController: UIViewController, GIDSignInDelegate, GIDSignInUIDelegate 
             print("\(error.localizedDescription)")
         } else {
             let dicToSend = ["func":"google", "id":user.userID!, "webmail":user.profile.email!]
-            let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+            //            let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+            //
+            //            ApiService.shared.getData(dataToSend: dataToSend) { (result: GoogleLoginResult) in
+            //                if result.data! == "signup ok" {
+            //                    UserDefaults.standard.set(true, forKey: "google")
+            //                    UserDefaults.standard.set(result.nickname!, forKey: "nickname")
+            //                    UserDefaults.standard.set(result.profile!, forKey: "profile")
+            //                    UserDefaults.standard.set(true, forKey: "isLoggedIn")
+            //                    UserDefaults.standard.set(user.userID!, forKey: "id")
+            //                    self.presentingViewController?.dismiss(animated: true)
+            //                } else if result.data! == "fail" {
+            //                    self.showAlert(message: "이미 가입되어 있는 이메일 입니다")
+            //                    GIDSignIn.sharedInstance()?.signOut()
+            //                }
+            //            }
             
-            ApiService.shared.getData(dataToSend: dataToSend) { (result: GoogleLoginResult) in
-                if result.data! == "signup ok" {
-                    UserDefaults.standard.set(true, forKey: "google")
-                    UserDefaults.standard.set(result.nickname!, forKey: "nickname")
-                    UserDefaults.standard.set(result.profile!, forKey: "profile")
-                    UserDefaults.standard.set(true, forKey: "isLoggedIn")
-                    UserDefaults.standard.set(user.userID!, forKey: "id")
-                    self.presentingViewController?.dismiss(animated: true)
-                } else if result.data! == "fail" {
-                    self.showAlert(message: "이미 가입되어 있는 이메일 입니다")
-                    GIDSignIn.sharedInstance()?.signOut()
+            ApiService.shared.loadingStart()
+            AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend as Parameters, encoding: JSONEncoding.default).responseJSON {
+                (responds) in
+                switch responds.result {
+                    
+                case .success(let value):
+                    let json:JSON = JSON(value)
+                    if json["data"].string == "signup ok" {
+                        UserDefaults.standard.set(true, forKey: "google")
+                        UserDefaults.standard.set(json["nickname"].string, forKey: "nickname")
+                        UserDefaults.standard.set(json["profile"].string, forKey: "profile")
+                        UserDefaults.standard.set(true, forKey: "isLoggedIn")
+                        UserDefaults.standard.set(user.userID!, forKey: "id")
+                        self.presentingViewController?.dismiss(animated: true)
+                    } else if json["data"].string == "fail" {
+                        self.showAlert(message: "이미 가입되어 있는 이메일 입니다")
+                        GIDSignIn.sharedInstance()?.signOut()
+                    } else if json["data"].string == "ban" {
+                        self.showAlert(message: "부적절한 행동으로 인해 이용이 금지되었습니다")
+                    }
+                    ApiService.shared.loadingStop()
+                    
+                    
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    ApiService.shared.loadingStop()
+                    self.showAlert(message: "네트워크 오류")
+                    
                 }
             }
-        }
-    }
-    
-    func showAlert(message: String) {
-        DispatchQueue.main.async {
-            let alertMessage = UIAlertController(title: "", message: message, preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "확인", style: .cancel)
-            
-            alertMessage.addAction(cancelAction)
-            self.present(alertMessage, animated: true, completion: nil)
         }
     }
     

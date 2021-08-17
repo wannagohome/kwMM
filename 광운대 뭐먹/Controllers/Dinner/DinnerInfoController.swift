@@ -33,6 +33,10 @@ class DinnerInfoController: UIViewController, GMSMapViewDelegate, CLLocationMana
         return true
     }
     
+    func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
+        print(coordinate.latitude)
+        print(coordinate.longitude)
+    }
 
     
     var mapView = GMSMapView.map(withFrame: CGRect.zero, camera: GMSCameraPosition.camera(withLatitude: -33.86, longitude: 151.20, zoom: 18.0))

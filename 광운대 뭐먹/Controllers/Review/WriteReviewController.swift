@@ -8,6 +8,8 @@
 
 import UIKit
 import PhotosUI
+import Alamofire
+import SwiftyJSON
 
 class WriteReviewController: UIViewController, UIImagePickerControllerDelegate,UINavigationControllerDelegate, UITextViewDelegate {
     var menuId: Int?
@@ -145,29 +147,44 @@ class WriteReviewController: UIViewController, UIImagePickerControllerDelegate,U
         if !isEdited { content = ""}
         let dicToSend: [String : Any] = ["func":"리뷰작성", "id":userId, "menuId":menuId!, "rate":rate, "contents":content, "image":base64String]
         
-        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//
+//        ApiService.shared.getData(dataToSend: dataToSend){ (result: SimpleResponse) in
+//            if result.data! == "작성성공"{
+//                self.presentingViewController?.dismiss(animated: true)
+//            } else if result.data! == "작성실패" {
+//                self.showAlert(message: "리뷰 작성에 실패하였습니다")
+//            } else if result.data! == "이미작성" {
+//                self.showAlert(message: "리뷰는 메뉴당 한 개 씩만 작성 가능합니다")
+//            }
+//
+//        }
         
-        ApiService.shared.getData(dataToSend: dataToSend){ (result: SimpleResponse) in
-            if result.data! == "작성성공"{
-                self.presentingViewController?.dismiss(animated: true)
-            } else if result.data! == "작성실패" {
-                self.showAlert(message: "리뷰 작성에 실패하였습니다")
-            } else if result.data! == "이미작성" {
-                self.showAlert(message: "리뷰는 메뉴당 한 개 씩만 작성 가능합니다")
+        ApiService.shared.loadingStart()
+        AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend, encoding: JSONEncoding.default).responseJSON {
+            (responds) in
+            switch responds.result {
+                
+            case .success(let value):
+                let json:JSON = JSON(value)
+                if json["data"].string == "작성성공"{
+                    self.presentingViewController?.dismiss(animated: true)
+                } else if json["data"].string == "작성실패" {
+                    self.showAlert(message: "리뷰 작성에 실패하였습니다")
+                } else if json["data"].string == "이미작성" {
+                    self.showAlert(message: "리뷰는 메뉴당 한 개 씩만 작성 가능합니다")
+                }
+                ApiService.shared.loadingStop()
+                
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+                ApiService.shared.loadingStop()
+                self.showAlert(message: "네트워크 오류")
+                
             }
-            
         }
         
-    }
-    
-    func showAlert(message: String) {
-        DispatchQueue.main.async {
-            let alertMessage = UIAlertController(title: "", message: message, preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "확인", style: .cancel)
-            
-            alertMessage.addAction(cancelAction)
-            self.present(alertMessage, animated: true, completion: nil)
-        }
     }
     
     func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {

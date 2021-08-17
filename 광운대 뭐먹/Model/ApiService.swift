@@ -59,7 +59,7 @@ class ApiService: NSObject {
         URLSession.shared.dataTask(with: request) { (data, response, error) in
             
             if error != nil {
-                self.stop()
+                self.loadingStop()
                 
                 DispatchQueue.main.async {
                     let errorLable:UILabel = UILabel(frame: CGRect(x: 0, y: 0, width: 230, height: 60))
@@ -98,7 +98,7 @@ class ApiService: NSObject {
                 UIApplication.shared.isNetworkActivityIndicatorVisible = false
             }
             
-            self.stop()
+            self.loadingStop()
             }.resume()
     }
     
@@ -123,12 +123,39 @@ class ApiService: NSObject {
         }
     }
     
-    func stop() {
+    func loadingStart()  {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+        let mainContainer: UIView = UIView(frame: UIScreen.main.bounds)
+        mainContainer.backgroundColor = UIColor(white: 1, alpha: 0.2)
+        mainContainer.tag = 789456123
+        mainContainer.isUserInteractionEnabled = false
+        
+        let imageView: UIImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 80, height: 80))
+        imageView.image = UIImage(named: "loading1")
+        imageView.center = mainContainer.center
+        imageView.accessibilityHint = "로딩 이미지"
+        imageView.layer.cornerRadius = 15
+        imageView.tag = 10
+        imageView.clipsToBounds = true
+        
+        if let keyWindow = UIApplication.shared.keyWindow{
+            keyWindow.addSubview(mainContainer)
+            keyWindow.addSubview(imageView)
+        }
+        
+        if Global.shared.timer == nil {
+            Global.shared.timer = Timer.scheduledTimer(timeInterval: 0.2, target: self, selector: #selector(loadingAnimation(_:)), userInfo: imageView, repeats: true)
+        }
+    }
+    
+    func loadingStop() {
+        
         if Global.shared.timer != nil {
             Global.shared.timer.invalidate()
             Global.shared.timer = nil
         }
         DispatchQueue.main.async {
+            UIApplication.shared.isNetworkActivityIndicatorVisible = false
             if let keyWindow = UIApplication.shared.keyWindow{
                 for subview in keyWindow.subviews{
                     if subview.tag == 789456123 || subview.accessibilityHint == "로딩 이미지"{
@@ -138,5 +165,24 @@ class ApiService: NSObject {
             }
         }
         
+    }
+    
+    func loadingError() {
+        DispatchQueue.main.async {
+            UIApplication.shared.isNetworkActivityIndicatorVisible = false
+            let errorLable:UILabel = UILabel(frame: CGRect(x: 0, y: 0, width: 230, height: 60))
+            errorLable.text = "네트워크 오류"
+            errorLable.textColor = lightblack
+            errorLable.font = UIFont.boldSystemFont(ofSize: 17)
+            errorLable.backgroundColor = UIColor.white
+            errorLable.textAlignment = .center
+            errorLable.tag = 198420917
+            if let keyWindow = UIApplication.shared.keyWindow{
+                errorLable.center = keyWindow.center
+                keyWindow.addSubview(errorLable)
+                Global.shared.isErrorLableShowing = true
+            }
+            
+        }
     }
 }

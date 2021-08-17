@@ -8,6 +8,8 @@
 
 import UIKit
 import GoogleSignIn
+import Alamofire
+import SwiftyJSON
 
 class MemberController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
@@ -117,14 +119,33 @@ class MemberController: UIViewController, UICollectionViewDelegate, UICollection
     }
     
     private func fetchImage() {
-        UIApplication.shared.isNetworkActivityIndicatorVisible = true
+//        UIApplication.shared.isNetworkActivityIndicatorVisible = true
         let userId = UserDefaults().string(forKey: "id")
         let dicToSend = ["func":"get profile", "id":userId]
-        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
-        ApiService.shared.getData(dataToSend: dataToSend){ (profileURL: Profile) in
-            self.profileImageView.sd_setImage(with: URL(string: (profileURL.image)!), placeholderImage: UIImage(named: "avatar"))
-            self.nicknameLabel.text = profileURL.nickname
-            UIApplication.shared.isNetworkActivityIndicatorVisible = false
+//        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//        ApiService.shared.getData(dataToSend: dataToSend){ (profileURL: Profile) in
+//            self.profileImageView.sd_setImage(with: URL(string: (profileURL.image)!), placeholderImage: UIImage(named: "avatar"))
+//            self.nicknameLabel.text = profileURL.nickname
+//            UIApplication.shared.isNetworkActivityIndicatorVisible = false
+//        }
+        ApiService.shared.loadingStart()
+        AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend as Parameters, encoding: JSONEncoding.default).responseJSON {
+            (responds) in
+            switch responds.result {
+                
+            case .success(let value):
+                let json:JSON = JSON(value)
+                self.profileImageView.sd_setImage(with: URL(string: json["image"].string!), placeholderImage: UIImage(named: "avatar"))
+                self.nicknameLabel.text = json["nickname"].string
+                ApiService.shared.loadingStop()
+                
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+                ApiService.shared.loadingStop()
+                self.showAlert(message: "네트워크 오류")
+                
+            }
         }
     }
     
@@ -198,13 +219,36 @@ class MemberController: UIViewController, UICollectionViewDelegate, UICollection
                 let userId = UserDefaults().string(forKey: "id")
                 let password = passwordTextField.text?.getSha256String()
                 let dicToSend = ["func":"login", "id":userId, "pwd":password]
-                let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
-                ApiService.shared.getData(dataToSend: dataToSend){ (result: Login) in
-                    if result.data == "로그인" {
-                        let editController = EditController()
-                        self.navigationController?.pushViewController(editController, animated: true)
-                    } else {
-                        self.showAlert(message: "비밀번호가 틀렸습니다")
+//                let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//                ApiService.shared.getData(dataToSend: dataToSend){ (result: Login) in
+//                    if result.data == "로그인" {
+//                        let editController = EditController()
+//                        self.navigationController?.pushViewController(editController, animated: true)
+//                    } else {
+//                        self.showAlert(message: "비밀번호가 틀렸습니다")
+//                    }
+//                }
+                ApiService.shared.loadingStart()
+                AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend as Parameters, encoding: JSONEncoding.default).responseJSON {
+                    (responds) in
+                    switch responds.result {
+                        
+                    case .success(let value):
+                        let json:JSON = JSON(value)
+                        if json["data"].string == "로그인" {
+                            let editController = EditController()
+                            self.navigationController?.pushViewController(editController, animated: true)
+                        } else {
+                            self.showAlert(message: "비밀번호가 틀렸습니다")
+                        }
+                        ApiService.shared.loadingStop()
+                        
+                        
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                        ApiService.shared.loadingStop()
+                        self.showAlert(message: "네트워크 오류")
+                        
                     }
                 }
             }
@@ -224,19 +268,7 @@ class MemberController: UIViewController, UICollectionViewDelegate, UICollection
             self.present(alertMessage, animated: true)
         }
     }
-    
-    func showAlert(message: String) {
-        DispatchQueue.main.async {
-            let alertMessage = UIAlertController(title: "", message: message, preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "확인", style: .cancel)
-            
-            alertMessage.addAction(cancelAction)
-            self.present(alertMessage, animated: true, completion: nil)
-        }
-    }
-    
 
-    
     @objc func presentLoginController() {
         let vc = LoginController()
         vc.modalTransitionStyle = .coverVertical

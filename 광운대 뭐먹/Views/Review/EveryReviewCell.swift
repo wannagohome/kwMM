@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import Alamofire
+import SwiftyJSON
 
 class EveryReviewCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
@@ -21,13 +23,22 @@ class EveryReviewCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataS
     }()
     
     var dinnerName: String?
-    var reviewsSet: Reviews? {
+//    var reviewsSet: Reviews? {
+//        didSet {
+//            reviews = reviewsSet
+//            collectionView.reloadData()
+//        }
+//    }
+    weak var dinnerController: DinnerController?
+    var jsonSet: JSON? {
         didSet {
-            reviews = reviewsSet
+            json = jsonSet
             collectionView.reloadData()
         }
     }
-    var reviews: Reviews?
+    
+//    var reviews: Reviews?
+    var json: JSON?
     let id = UserDefaults().string(forKey: "id") ?? " "
     weak var delegate: DinnerController?
     
@@ -64,28 +75,49 @@ class EveryReviewCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataS
     
     func fetchLists() {
         let dicToSend: [String: Any] = ["func":"전체 리뷰","restaurantName":dinnerName!, "id":id, "order":order]
-        let dataToSend: Data = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
-        
-        //FIXME: change view if needed
-        ApiService.shared.getData(dataToSend: dataToSend){ (reviews: Reviews) in
-            self.reviews = reviews
-            self.collectionView.reloadData()
+//        let dataToSend: Data = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//
+//        //FIXME: change view if needed
+//        ApiService.shared.getData(dataToSend: dataToSend){ (reviews: Reviews) in
+//            self.reviews = reviews
+//            self.collectionView.reloadData()
+//        }
+        ApiService.shared.loadingStart()
+        AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend, encoding: JSONEncoding.default).responseJSON {
+            (responds) in
+            switch responds.result {
+                
+            case .success(let value):
+                self.json = JSON(value)
+                self.collectionView.reloadData()
+                ApiService.shared.loadingStop()
+                
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+                ApiService.shared.loadingStop()
+                self.dinnerController?.showAlert(message: "네트워크 오류")
+                
+            }
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return reviews?.reviews?.count ?? 0
+//        return reviews?.reviews?.count ?? 0
+        return json?["reviews"].count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "review", for: indexPath) as! MenuReviewCell
         cell.dinnerController = self.delegate
-        cell.review = reviews?.reviews?[indexPath.row]
+//        cell.review = reviews?.reviews?[indexPath.row]
+        cell.reviewJson = json?["reviews"][indexPath.row]
         cell.backgroundColor = UIColor.white
         cell.layer.borderWidth = 0.3
         cell.layer.borderColor = UIColor(white: 0.9, alpha: 1).cgColor
         
-        cell.menuNameLabel.text = reviews?.reviews?[indexPath.row].menuName
+//        cell.menuNameLabel.text = reviews?.reviews?[indexPath.row].menuName
+        cell.menuNameLabel.text = json?["reviews"][indexPath.row]["menuName"].string
         cell.setNeedsUpdateConstraints()
         cell.updateConstraintsIfNeeded()
         
@@ -99,9 +131,10 @@ class EveryReviewCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataS
         let approximateWidth = contentView.frame.width - 30 - 5 - 5 - 10
         let size = CGSize(width: approximateWidth, height: 1000)
         let attribute = [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)]
-        let estimatedFrame = NSString(string: (reviews?.reviews?[indexPath.row].contents)!).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attribute, context: nil)
-        
-        let temp = (reviews?.reviews?[indexPath.row].reviewPic)!
+//        let estimatedFrame = NSString(string: (reviews?.reviews?[indexPath.row].contents)!).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attribute, context: nil)
+        let estimatedFrame = NSString(string: (json?["reviews"][indexPath.row]["contents"].string)!).boundingRect(with: size, options: .usesLineFragmentOrigin, attributes: attribute, context: nil)
+//        let temp = (reviews?.reviews?[indexPath.row].reviewPic)!
+        let temp = (json?["reviews"][indexPath.row]["reviewPic"].string)!
         let index = temp.lastIndex(of: "/")
         let def = temp[index! ..< temp.endIndex]
         
@@ -111,7 +144,7 @@ class EveryReviewCell: BaseCell, UICollectionViewDelegate, UICollectionViewDataS
         } else {
             heightPlus = 150   
         }
-        if (reviews?.reviews?[indexPath.row].contents == "") {
+        if (json?["reviews"][indexPath.row]["contents"].string == "") {
             heightPlus -= 20
         }
         

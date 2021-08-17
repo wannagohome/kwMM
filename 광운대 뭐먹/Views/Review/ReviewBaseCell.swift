@@ -8,6 +8,7 @@
 
 import UIKit
 import SDWebImage
+import SwiftyJSON
 
 class ReviewBaseCell: BaseCell {
     
@@ -18,15 +19,16 @@ class ReviewBaseCell: BaseCell {
     var recommend: Int?
     var id = UserDefaults().string(forKey: "id") ?? " "
     
-    var review: Review? {
+    
+    var reviewJson: JSON? {
         didSet {
-            nicknameLable.text = review?.nickname
+            nicknameLable.text = reviewJson?["nickname"].string
             
             let dateFormatter: DateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy/MM/dd HH:mm:ss"
             dateFormatter.locale = Locale(identifier: "ko_kr")
             dateFormatter.timeZone = TimeZone(abbreviation: "KST")
-            let writedDate: Date? = dateFormatter.date(from: (review?.time)!) ?? Date()
+            let writedDate: Date? = dateFormatter.date(from: (reviewJson?["time"].string)!) ?? Date()
             let now: Date = Date()
             let component: DateComponents? = Calendar.current.dateComponents([.weekOfYear, .day, .hour, .minute], from: writedDate!, to: now)
             var timeString: String = ""
@@ -57,38 +59,38 @@ class ReviewBaseCell: BaseCell {
             }
             
             timeLable.text = timeString
-            contentTextView.text = review?.contents
-            reviewId = review?.reviewId
+            contentTextView.text = reviewJson?["contents"].string
+            reviewId = reviewJson?["reviewId"].int
             contentView.accessibilityIdentifier = "ReviewCell contentView" + String(reviewId!)
-            rateView.rating = (review?.rate)!
-            recommend = review?.recommend
+            rateView.rating = (reviewJson?["rate"].double)!
+            recommend = reviewJson?["recommend"].int
             recommendNumberLable.text = String(recommend!)
             recommendButton.tag = reviewId!
             
-            if review?.isRecommended! == 1 {
+            if reviewJson?["isRecommended"].int == 1 {
                 recommendButton.setImage(UIImage(named: "thumbcolor"), for: .normal)
                 
             } else {
                 recommendButton.setImage(UIImage(named: "thumb"), for: .normal)
             }
             
-            let temp = (review?.reviewPic)!
+            let temp = (reviewJson?["reviewPic"].string)!
             let index = temp.lastIndex(of: "/")
             let def = temp[index! ..< temp.endIndex]
-
+            
             if def == "/default" {
                 self.reviewImageView.removeConstraint(self.heightAnchorConstraint150!)
                 self.heightAnchorConstraint0?.isActive = true
             } else {
                 self.reviewImageView.removeConstraint(self.heightAnchorConstraint0!)
                 self.heightAnchorConstraint150?.isActive = true
-//                reviewImageView.fetchImage(URLs: self.review?.reviewPic)
-                reviewImageView.sd_setImage(with: URL(string: (self.review?.reviewPic)!))
+                //                reviewImageView.fetchImage(URLs: self.review?.reviewPic)
+                reviewImageView.sd_setImage(with: URL(string: (self.reviewJson?["reviewPic"].string)!))
             }
             
             
-//            profileImageView.fetchImage(URLs: self.review?.profilePic)
-            profileImageView.sd_setImage(with: URL(string: (self.review?.profilePic)!), placeholderImage: UIImage(named: "avatar"))
+            //            profileImageView.fetchImage(URLs: self.review?.profilePic)
+            profileImageView.sd_setImage(with: URL(string: (self.reviewJson?["profilePic"].string)!), placeholderImage: UIImage(named: "avatar"))
             
             
         }

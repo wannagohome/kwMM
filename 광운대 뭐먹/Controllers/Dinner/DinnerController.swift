@@ -8,19 +8,31 @@
 
 import UIKit
 import GoogleMaps
+import Alamofire
+import SwiftyJSON
 
 class DinnerController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, MenuListCellDelegate, GMSMapViewDelegate {
     
     var dinnerName: String?
     var rate: Double?
     
-    var reviews: Reviews?
-    var menus: MenuList? {
+//    var reviews: Reviews?
+    var reviewJson: JSON?
+//    var menus: MenuList? {
+//        didSet {
+//            for i in 0 ..< (menus?.restaurants?.count)! {
+//                let temp: [MenuInfo]? = menus?.restaurants?[i].restaurant?.sorted{ $0.rate! > $1.rate! }
+//                menus?.restaurants?[i].restaurant = temp
+//            }
+//        }
+//    }
+    var menuJson: JSON? {
         didSet {
-            for i in 0 ..< (menus?.restaurants?.count)! {
-                let temp2: [MenuInfo]? = menus?.restaurants?[i].restaurant?.sorted{ $0.rate! > $1.rate! }
-                menus?.restaurants?[i].restaurant = temp2
+            for i in 0 ..< (menuJson?["restaurants"].count)! {
+                let temp = menuJson?["restaurants"][i]["restaurant"].arrayValue.sorted{ $0["rate"].double! > $1["rate"].double! }
+                menuJson?["restaurants"][i]["restaurant"] = JSON(temp!)
             }
+//            rate = Double((menuJson?["data"].string)!)
         }
     }
     let id = UserDefaults().string(forKey: "id") ?? " "
@@ -115,16 +127,37 @@ class DinnerController: UIViewController, UICollectionViewDelegate, UICollection
         menuBar.layer.addBorder([.top, .bottom], color: UIColor(white: 0.0, alpha: 1), width: 1)
     }
     
-    var dinnerInfo: DinnerInfo?
+//    var dinnerInfo: DinnerInfo?
+    var dinnerInfoJson: JSON?
     
     func getCoordinate() {
         let dicToSend: [String : Any] = ["func":"info", "restaurantName":dinnerName!]
-        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//        let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//
+//        ApiService.shared.getData(dataToSend: dataToSend){ (result: DinnerInfo) in
+//            self.dinnerInfo = result
+//            self.isDataDidFetched += 1
+//            self.dataDidFatched()
+//        }
         
-        ApiService.shared.getData(dataToSend: dataToSend){ (result: DinnerInfo) in
-            self.dinnerInfo = result
-            self.isDataDidFetched += 1
-            self.dataDidFatched()
+        ApiService.shared.loadingStart()
+        AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend, encoding: JSONEncoding.default).responseJSON {
+            (responds) in
+            switch responds.result {
+                
+            case .success(let value):
+                self.dinnerInfoJson = JSON(value)
+                self.isDataDidFetched += 1
+                self.dataDidFatched()
+                ApiService.shared.loadingStop()
+                
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+                ApiService.shared.loadingStop()
+                self.showAlert(message: "네트워크 오류")
+                
+            }
         }
     }
     
@@ -132,24 +165,65 @@ class DinnerController: UIViewController, UICollectionViewDelegate, UICollection
         if dinnerName != nil {
             
             let dicToSend = ["func":"메뉴 아이폰", "restaurantName":dinnerName!]
-            let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//            let dataToSend = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//
+//            ApiService.shared.getData(dataToSend: dataToSend){ (menus: MenuList) in
+//                self.menus = menus
+//                self.isDataDidFetched += 1
+//                self.dataDidFatched()
+//            }
             
-            ApiService.shared.getData(dataToSend: dataToSend){ (menus: MenuList) in
-                self.menus = menus
-                self.isDataDidFetched += 1
-                self.dataDidFatched()
+            ApiService.shared.loadingStart()
+            AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend, encoding: JSONEncoding.default).responseJSON {
+                (responds) in
+                switch responds.result {
+
+                case .success(let value):
+                    self.menuJson = JSON(value)
+                    self.isDataDidFetched += 1
+                    self.dataDidFatched()
+                    ApiService.shared.loadingStop()
+
+
+                case .failure(let error):
+                    print(error.localizedDescription)
+                    ApiService.shared.loadingStop()
+                    self.showAlert(message: "네트워크 오류")
+
+                }
             }
         }
     }
     
     func fetchReviewLists() {
         let dicToSend: [String: Any] = ["func":"전체 리뷰","restaurantName":dinnerName!, "id":id, "order":"time"]
-        let dataToSend: Data = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//        let dataToSend: Data = try! JSONSerialization.data(withJSONObject: dicToSend, options: [])
+//
+//        ApiService.shared.getData(dataToSend: dataToSend){ (reviews: Reviews) in
+//            self.reviews = reviews
+//            self.isDataDidFetched += 1
+//            self.dataDidFatched()
+//        }
         
-        ApiService.shared.getData(dataToSend: dataToSend){ (reviews: Reviews) in
-            self.reviews = reviews
-            self.isDataDidFetched += 1
-            self.dataDidFatched()
+        
+        ApiService.shared.loadingStart()
+        AF.request("http://kwmm.kr:8080/kwMM/Main2", method: .post, parameters: dicToSend, encoding: JSONEncoding.default).responseJSON {
+            (responds) in
+            switch responds.result {
+                
+            case .success(let value):
+                self.reviewJson = JSON(value)
+                self.isDataDidFetched += 1
+                self.dataDidFatched()
+                ApiService.shared.loadingStop()
+                
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+                ApiService.shared.loadingStop()
+                self.showAlert(message: "네트워크 오류")
+                
+            }
         }
     }
     
@@ -218,25 +292,32 @@ class DinnerController: UIViewController, UICollectionViewDelegate, UICollection
         if indexPath.item == 0 {
             weak var cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MenuList", for: indexPath) as? MenuListCell
             cell?.dinnerName = self.dinnerName
-            cell?.menusSet = self.menus
+//            cell?.menusSet = self.menus
+            cell?.jsonSet = self.menuJson
             cell?.delegate = self
+            cell?.dinnerController = self
+//            cell?.fetchLists()
             return cell!
         } else if indexPath.item == 1 {
-            if reviews?.reviews?.count == 0 {
+            
+            if reviewJson?["reviews"].count == 0 {
                 weak var cell = collectionView.dequeueReusableCell(withReuseIdentifier: "crying", for: indexPath) as? CryingCell
                 return cell!
             } else {
                 weak var cell = collectionView.dequeueReusableCell(withReuseIdentifier: "everyreview", for: indexPath) as? EveryReviewCell
                 cell?.delegate = self
-                cell?.reviewsSet = self.reviews
+//                cell?.reviewsSet = self.reviews
+                cell?.dinnerController = self
+                cell?.jsonSet = self.reviewJson
                 cell?.dinnerName = dinnerName
                 return cell!
             }
         } else {
             weak var cell = collectionView.dequeueReusableCell(withReuseIdentifier: "info", for: indexPath) as? DinnerInfoCell
-            if dinnerInfo != nil {
+            if dinnerInfoJson != nil {
                 cell?.dinnerController = self
-                cell?.info = dinnerInfo?.info
+//                cell?.info = dinnerInfo?.info
+                cell?.json = dinnerInfoJson?["info"]
             }
             return cell!
         }
@@ -245,8 +326,10 @@ class DinnerController: UIViewController, UICollectionViewDelegate, UICollection
     
     func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
         let vc = DinnerInfoController()
-        vc.x = dinnerInfo?.info?.x
-        vc.y = dinnerInfo?.info?.y
+//        vc.x = dinnerInfo?.info?.x
+//        vc.y = dinnerInfo?.info?.y
+        vc.x = dinnerInfoJson?["info"]["x"].double
+        vc.y = dinnerInfoJson?["info"]["y"].double
         vc.dinnerName = dinnerName
 
         self.navigationController?.pushViewController(vc, animated: true)

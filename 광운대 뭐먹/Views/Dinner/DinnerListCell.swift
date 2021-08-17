@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftyJSON
 
 class BaseCell: UICollectionViewCell {
     override init(frame: CGRect) {
@@ -32,6 +33,15 @@ class DinnerListCell: BaseCell {
             numberOfRateLabel.text = "리뷰 수 : " + String(format: "%d" ,(dinnerList?.numberOfRate)!)
         }
     }
+    
+    var dinnerListJson: JSON? {
+        didSet {
+            dinnerNameLabel.text = dinnerListJson?["dinnerName"].string
+            rateLabel.text = String(format: "%.1f", (dinnerListJson?["rate"].double) ?? 0.0)
+            numberOfRateLabel.text = "리뷰 수 : " + String(format: "%d" ,(dinnerListJson?["numberOfRate"].int) ?? 0)
+        }
+    }
+    
     
     
     
