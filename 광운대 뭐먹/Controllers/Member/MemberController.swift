@@ -207,6 +207,11 @@ class MemberController: UIViewController, UICollectionViewDelegate, UICollection
                     UIApplication.shared.openURL(url)
                 }
             }
+        } else if indexPath.item == 3 {
+            if updateString == "업데이트가 필요 합니다" {
+                UIApplication.shared.open(URL(string: "itms-apps://itunes.apple.com/app/id1454978912")!, options: [:], completionHandler: nil)
+            }
+            
         }
     }
     
