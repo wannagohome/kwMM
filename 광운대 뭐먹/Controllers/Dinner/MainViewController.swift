@@ -74,7 +74,8 @@ class MainViewController: UICollectionViewController, UICollectionViewDelegateFl
             case .success(let value):
                 let json:JSON = JSON(value)
                 if json["data"].string == "ban" {
-                    self.showAlert(message: "부적절한 행동으로 인해 이용이 금지되었습니다")
+                    
+                    self.showAlert(message: "부적절한 행동으로 인해 \((json["date"].string)!)까지 이용이 금지되었습니다")
                     if UserDefaults().bool(forKey: "google") {
                         GIDSignIn.sharedInstance()?.signOut()
                     }
